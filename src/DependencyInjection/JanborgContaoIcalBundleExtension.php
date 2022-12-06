@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 /*
- * @author  Moritz Vondano
- * @license LGPL-3.0-or-later
+ * This file is part of contao-ical-bundle.
+ *
+ * (c) Jan Lünborg
+ *
+ * @license MIT
  */
 
 namespace Janborg\IcalBundle\DependencyInjection;
