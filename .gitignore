@@ -1,0 +1,11 @@
+#Composer
+/vendor/
+/composer.lock
+/var/
+
+#Phpunit
+/.phpunit.result.cache
+/phpunit.xml
+
+#tools
+/tools/*/vendor
