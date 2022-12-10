@@ -10,14 +10,14 @@ declare(strict_types=1);
  * @license MIT
  */
 
-namespace Janborg\IcalBundle\Tests\ContaoManager;
+namespace Janborg\ContaoIcal\Tests\ContaoManager;
 
 use Contao\CalendarBundle\ContaoCalendarBundle;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Janborg\IcalBundle\ContaoManager\Plugin;
-use Janborg\IcalBundle\JanborgContaoIcalBundle;
+use Janborg\ContaoIcal\ContaoManager\Plugin;
+use Janborg\ContaoIcal\JanborgContaoIcalBundle;
 use PHPUnit\Framework\TestCase;
 
 class PluginTest extends TestCase

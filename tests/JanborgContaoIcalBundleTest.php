@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license MIT
  */
 
-namespace Janborg\IcalBundle\Tests;
+namespace Janborg\ContaoIcal\Tests;
 
-use Janborg\IcalBundle\JanborgContaoIcalBundle;
+use Janborg\ContaoIcal\JanborgContaoIcalBundle;
 use PHPUnit\Framework\TestCase;
 
 class JanborgContaoIcalBundleTest extends TestCase
@@ -21,6 +21,6 @@ class JanborgContaoIcalBundleTest extends TestCase
     {
         $bundle = new JanborgContaoIcalBundle();
 
-        $this->assertInstanceOf('Janborg\IcalBundle\JanborgContaoIcalBundle', $bundle);
+        $this->assertInstanceOf('Janborg\ContaoIcal\JanborgContaoIcalBundle', $bundle);
     }
 }
