@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    _instanceof:
+        Contao\CoreBundle\Framework\FrameworkAwareInterface:
+            calls:
+                - [setFramework, ['@contao.framework']]
+
+    contaoical.calendar.generateical.callback:
+        class: Janborg\ContaoIcal\EventListener\DataContainer\GenerateIcalOnCalendarSubmitCallback   
+        arguments:
+            - '@request_stack'
+
+    contaoical.calendarevents.generateical.callback:
+        class: Janborg\ContaoIcal\EventListener\DataContainer\GenerateIcalOnCalendarEventSubmitCallback
+        arguments:
+            - '@request_stack'
