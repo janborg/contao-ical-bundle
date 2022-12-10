@@ -1,17 +1,23 @@
 {
-    "name":"janborg/contao-ical-bundle",
-    "description":"Bietet erweiterete ical Funktionen fürden Contao Kalender",
-    "keywords":["Kalender", "ical", "ics", "webcal", "Export"],
-    "type":"contao-bundle",
-    "license":"MIT",
-    "authors":[
+    "name": "janborg/contao-ical-bundle",
+    "description": "Bietet erweiterete ical Funktionen fürden Contao Kalender",
+    "keywords": [
+        "Kalender",
+        "ical",
+        "ics",
+        "webcal",
+        "Export"
+    ],
+    "type": "contao-bundle",
+    "license": "MIT",
+    "authors": [
         {
-            "name":"Jan Lünborg",
-            "homepage":"https://github.com/janborg"
+            "name": "Jan Lünborg",
+            "homepage": "https://github.com/janborg"
         }
     ],
-    "require":{
-        "php":"^8.1",
+    "require": {
+        "php": "^8.1",
         "contao/core-bundle": "^4.13 || ^5.0",
         "contao/calendar-bundle": "^4.13 || ^5.0",
         "kigkonsult/icalcreator": "^2.4"
@@ -23,29 +29,30 @@
         "symfony/phpunit-bridge": "^6.1"
     },
     "conflict": {
-         "contao/manager-plugin": "<2.0 || >=3.0"
+        "contao/manager-plugin": "<2.0 || >=3.0"
     },
     "autoload": {
         "psr-4": {
-            "Janborg\\IcalBundle\\": "src/"
-          }
-      },
+            "Janborg\\ContaoIcal\\": "src/"
+        }
+    },
     "autoload-dev": {
-      "psr-4": {
-          "Janborg\\IcalBundle\\Tests\\": "tests/"
-          }
-      },
-      "extra":{
+        "psr-4": {
+            "Janborg\\ContaoIcal\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
         "bamarni-bin": {
             "bin-links": false,
-            "target-directory": "tools"
+            "target-directory": "tools",
+            "forward-command": true
         },
-      "contao-manager-plugin": "Janborg\\IcalBundle\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Janborg\\ContaoIcal\\ContaoManager\\Plugin"
     },
     "support": {
         "issues": "https://github.com/janborg/contao-ical-bundle/issues",
         "source": "https://github.com/janborg/contao-ical-bundle"
-    }, 
+    },
     "config": {
         "allow-plugins": {
             "contao-components/installer": true,

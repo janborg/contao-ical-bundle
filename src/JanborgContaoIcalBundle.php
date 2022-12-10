@@ -10,10 +10,14 @@ declare(strict_types=1);
  * @license MIT
  */
 
-namespace Janborg\IcalBundle;
+namespace Janborg\ContaoIcal;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class JanborgContaoIcalBundle extends Bundle
 {
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
 }
