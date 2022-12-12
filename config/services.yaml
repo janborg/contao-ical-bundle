@@ -14,3 +14,13 @@ services:
         Symfony\Component\DependencyInjection\ContainerAwareInterface:
             calls:
                 - ['setContainer', ['@service_container']]
+
+    Janborg\ContaoIcal\Cron\GenerateIcalCron:
+        arguments:
+            - '@contao.framework'
+
+    Janborg\ContaoIcal\Cron\RemoveOldIcalFilesCron:
+        arguments:
+            - '@contao.framework'
+        
+                
