@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Janborg\ContaoIcal\EventListener\DataContainer;
 
 use Contao\CalendarModel;
+use Contao\CalendarEventsModel;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
 use Janborg\ContaoIcal\CalendarIcalExporter;
@@ -36,7 +37,7 @@ class GenerateIcalOnCalendarEventSubmitCallback
             return;
         }
 
-        $calendar = CalendarModel::findByPk($dc->pid);
+        $calendar = CalendarModel::findByPk(CalendarEventsModel::findById($dc->id)->pid);
 
         if (null !== $calendar) {
             $calenderExporter = new CalendarIcalExporter($calendar);
