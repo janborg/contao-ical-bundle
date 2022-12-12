@@ -1,6 +1,6 @@
 {
     "name": "janborg/contao-ical-bundle",
-    "description": "Bietet erweiterete ical Funktionen für den Contao Kalender",
+    "description": "Bietet ical Funktionen für den Contao Kalender",
     "keywords": [
         "Kalender",
         "ical",
