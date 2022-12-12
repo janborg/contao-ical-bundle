@@ -13,5 +13,6 @@ If you want to override these settings, you  can do this in your common configur
 # Contao Ical (default settings)
 janborg_contaoical:
   defaultEndDateDays: 365
+  defaultEventDuration: 60
 ```
 

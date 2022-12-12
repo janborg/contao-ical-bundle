@@ -30,5 +30,6 @@ class JanborgContaoIcalExtension extends Extension
 
         // Configuration
         $container->setParameter('janborg_contaoical.defaultEndDateDays', $config['defaultEndDateDays']);
+        $container->setParameter('janborg_contaoical.defaultEventDuration', $config['defaultEventDuration']);
     }
 }

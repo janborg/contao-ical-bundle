@@ -68,7 +68,7 @@ class CalendarIcalExporter
                         );
                     } else {
                         $vEvent->setDtend(
-                            date(DateTimeFactory::$YmdTHis, $objEvents->startTime + 60 * 60),
+                            date(DateTimeFactory::$YmdTHis, $objEvents->startTime + System::getContainer()->getParameter('janborg_contaoical.defaultEventDuration') * 60),
                             [Vcalendar::VALUE => Vcalendar::DATE_TIME]
                         );
                     }

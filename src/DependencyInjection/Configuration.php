@@ -26,6 +26,9 @@ class Configuration implements ConfigurationInterface
             ->integerNode('defaultEndDateDays')
             ->defaultValue(365)
             ->end()
+            ->integerNode('defaultEventDuration')
+            ->defaultValue(60)
+            ->end()
             ->end()
         ;
 
