@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\EventListener\DataContainer;
 
-use Contao\CalendarModel;
 use Contao\CalendarEventsModel;
+use Contao\CalendarModel;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
 use Janborg\ContaoIcal\CalendarIcalExporter;

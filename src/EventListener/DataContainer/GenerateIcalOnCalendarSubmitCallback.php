@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class GenerateIcalOnCalendarSubmitCallback
 {
-    private $requestStack;
+    private RequestStack $requestStack;
 
     public function __construct(RequestStack $requestStack)
     {
