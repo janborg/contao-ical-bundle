@@ -17,9 +17,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_KEY = 'janborg_contao_ical';
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('janborg_contaoical');
+        $treeBuilder = new TreeBuilder(self::ROOT_KEY);
 
         $treeBuilder->getRootNode()
             ->children()

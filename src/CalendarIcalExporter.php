@@ -24,6 +24,12 @@ use Kigkonsult\Icalcreator\Vevent;
 
 class CalendarIcalExporter
 {
+    /**
+     * @var CalendarModel
+     */
+    private $calendar;
+
+
     public function __construct(CalendarModel $calendar)
     {
         $this->objCalendar = $calendar;
@@ -34,7 +40,7 @@ class CalendarIcalExporter
 
         $this->startDate = '' !== $calendar->ical_export_start ? $calendar->ical_export_start : 0;
 
-        $this->endDate = '' !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contaoical.defaultEndDateDays') * 24 * 3600;
+        $this->endDate = '' !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
     }
 
     /**
@@ -50,7 +56,7 @@ class CalendarIcalExporter
             $this->addEventToVcalendar($objEvent, $this->vCal);
         }
 
-        $this->createIcalFile(StringUtil::stripRootDir($this->shareDir), $this->exportFileName);
+        $this->saveIcalFile(StringUtil::stripRootDir($this->shareDir), $this->exportFileName);
     }
 
     /**
@@ -93,7 +99,7 @@ class CalendarIcalExporter
                     );
                 } else {
                     $vEvent->setDtend(
-                        date(DateTimeFactory::$YmdTHis, $objEvent->startTime + System::getContainer()->getParameter('janborg_contaoical.defaultEventDuration') * 60),
+                        date(DateTimeFactory::$YmdTHis, $objEvent->startTime + System::getContainer()->getParameter('janborg_contao_ical.defaultEventDuration') * 60),
                         [Vcalendar::VALUE => Vcalendar::DATE_TIME]
                     );
                 }
@@ -187,7 +193,7 @@ class CalendarIcalExporter
      * @property string $path
      * @property string $filename
      */
-    public function createIcalFile(string $path, string $filename): void
+    public function saveIcalFile(string $path, string $filename): void
     {
         $this->iCalContent = $this->vCal->createCalendar();
 
