@@ -209,4 +209,12 @@ class CalendarIcalExporter
         $this->objICalFile->close();
 
     }
+
+    /**
+     * Returns IcalContent as String
+     */
+    public function getIcalContent(): string
+    {
+        return $this->vCal->createCalendar();
+    }
 }
