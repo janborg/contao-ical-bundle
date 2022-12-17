@@ -17,10 +17,10 @@ use Contao\CalendarModel;
 use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\StringUtil;
 use Contao\System;
-use Symfony\Component\Routing\Annotation\Route;
-use Janborg\ContaoIcal\Response\CalendarResponse;
 use Janborg\ContaoIcal\CalendarIcalExporter;
+use Janborg\ContaoIcal\Response\CalendarResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class IcalCalendarController
 {
@@ -34,8 +34,7 @@ class IcalCalendarController
         $security = System::getContainer()->get('security.helper');
 
         if ($calendar->protected && !$security->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, StringUtil::deserialize($calendar->groups, true))) {
-            $response = new Response('', 403);
-            return $response;
+            return new Response('', 403);
         }
 
         $calendarIcalExporter = new CalendarIcalExporter($calendar);
@@ -46,9 +45,7 @@ class IcalCalendarController
 
         $iCalContent = $calendarIcalExporter->vCal;
 
-        $calendarResponse = new CalendarResponse($iCalContent, StringUtil::standardize($event->title));
-
-        return $calendarResponse;
+        return new CalendarResponse($iCalContent, StringUtil::standardize($event->title));
     }
 
     #[Route('/ical/calendar/{id}', name: 'janborg_calendar_ical_calendar', defaults: ['_scope' => 'frontend', '_token_check' => true])]
@@ -59,8 +56,7 @@ class IcalCalendarController
         $security = System::getContainer()->get('security.helper');
 
         if ($calendar->protected && !$security->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, StringUtil::deserialize($calendar->groups, true))) {
-            $response = new Response('', 403);
-            return $response;
+            return new Response('', 403);
         }
 
         $calendarIcalExporter = new CalendarIcalExporter($calendar);
@@ -75,8 +71,6 @@ class IcalCalendarController
 
         $iCalContent = $calendarIcalExporter->vCal;
 
-        $calendarResponse = new CalendarResponse($iCalContent, StringUtil::standardize($calendar->title));
-
-        return $calendarResponse;
+        return new CalendarResponse($iCalContent, StringUtil::standardize($calendar->title));
     }
 }

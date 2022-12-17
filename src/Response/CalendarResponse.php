@@ -1,33 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of contao-ical-bundle.
+ *
+ * (c) Jan Lünborg
+ *
+ * @license MIT
+ */
+
 namespace Janborg\ContaoIcal\Response;
 
-use Symfony\Component\HttpFoundation\Response;
 use Kigkonsult\Icalcreator\Vcalendar;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * HTTP response for a calendar file download
- *
+ * HTTP response for a calendar file download.
  */
 class CalendarResponse extends Response
 {
     /**
-     * Calendar
+     * Calendar.
      *
      * @var Vcalendar
      */
     protected $calendar;
 
-
     /**
-     * Construct calendar response
+     * Construct calendar response.
      *
      * @param Vcalendar $calendar Calendar
      * @param string    $filename Filename
-     * @param int      $status   Response status
-     * @param array    $headers  Response headers
+     * @param int       $status   Response status
+     * @param array     $headers  Response headers
      */
-    public function __construct(Vcalendar $calendar, $filename, $status = 200, $headers = array())
+    public function __construct(Vcalendar $calendar, $filename, $status = 200, $headers = [])
     {
         $this->vCal = $calendar;
 
@@ -39,15 +47,14 @@ class CalendarResponse extends Response
         parent::__construct($content, $status, $headers);
     }
 
-
     /**
-     * Get default response headers for a calendar
+     * Get default response headers for a calendar.
      *
      * @return array
      */
     protected function getDefaultHeaders()
     {
-        $headers = array();
+        $headers = [];
 
         $mimeType = 'text/calendar';
         $headers['Content-Type'] = sprintf('%s; charset=utf-8', $mimeType);

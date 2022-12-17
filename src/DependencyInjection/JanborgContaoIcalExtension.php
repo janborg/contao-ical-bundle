@@ -43,7 +43,6 @@ class JanborgContaoIcalExtension extends Extension
 
         $rootKey = $this->getAlias();
 
-
         // Configuration
         $container->setParameter($rootKey.'.defaultEndDateDays', $config['defaultEndDateDays']);
         $container->setParameter($rootKey.'.defaultEventDuration', $config['defaultEventDuration']);

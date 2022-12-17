@@ -29,7 +29,6 @@ class CalendarIcalExporter
      */
     private $calendar;
 
-
     public function __construct(CalendarModel $calendar)
     {
         $this->objCalendar = $calendar;
@@ -60,10 +59,10 @@ class CalendarIcalExporter
     }
 
     /**
-     * Creates a VCalendar for a given Contao Calendar
+     * Creates a VCalendar for a given Contao Calendar.
+     *
      * @property CalendarModel $objCalendar
      */
-
     public function createVCalendar(CalendarModel $objCalendar): void
     {
         $this->vCal = new Vcalendar();
@@ -71,13 +70,13 @@ class CalendarIcalExporter
         $this->vCal->setXprop(Vcalendar::X_WR_CALNAME, $objCalendar->title);
         $this->vCal->setXprop(Vcalendar::X_WR_CALDESC, $objCalendar->ical_description);
         $this->vCal->setXprop(Vcalendar::X_WR_TIMEZONE, Config::get('timeZone'));
-
     }
 
     /**
-     * Adds a Contao CalendarEvent to a given VCalendar
+     * Adds a Contao CalendarEvent to a given VCalendar.
+     *
      * @property CalendarEventsModel $objEvent
-     * @property Vcalendar $vCal
+     * @property Vcalendar           $vCal
      */
     public function addEventToVcalendar(CalendarEventsModel $objEvent, Vcalendar $vCal): void
     {
@@ -194,7 +193,8 @@ class CalendarIcalExporter
     }
 
     /**
-     * Writes the Vcalendar to a file and saves it at the given path
+     * Writes the Vcalendar to a file and saves it at the given path.
+     *
      * @property string $path
      * @property string $filename
      */
@@ -207,11 +207,10 @@ class CalendarIcalExporter
         $this->objICalFile->write($this->iCalContent);
 
         $this->objICalFile->close();
-
     }
 
     /**
-     * Returns IcalContent as String
+     * Returns IcalContent as String.
      */
     public function getIcalContent(): string
     {
