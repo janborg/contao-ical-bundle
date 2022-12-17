@@ -81,6 +81,11 @@ class CalendarIcalExporter
      */
     public function addEventToVcalendar(CalendarEventsModel $objEvent, Vcalendar $vCal): void
     {
+        // only add Event if it is published
+        if (!$objEvent->published) {
+            return;
+        }
+
         $vEvent = new Vevent();
 
         switch ($objEvent->addTime) {
