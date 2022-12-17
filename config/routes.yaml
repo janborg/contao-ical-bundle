@@ -1,0 +1,4 @@
+# config/routes.yaml
+janborg_contao_ical.controller:
+    resource: ../src/Controller
+    type: annotation

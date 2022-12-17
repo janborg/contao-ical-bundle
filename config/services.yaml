@@ -22,5 +22,8 @@ services:
     Janborg\ContaoIcal\Cron\RemoveOldIcalFilesCron:
         arguments:
             - '@contao.framework'
-        
+
+    Janborg\ContaoIcal\Controller\IcalCalendarController: 
+        tags: 
+            - 'controller.service_arguments'
                 
