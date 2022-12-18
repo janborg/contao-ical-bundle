@@ -38,7 +38,7 @@ class GenerateIcalOnCalendarSubmitCallback
 
         $calendar = CalendarModel::findByPk($dc->id);
 
-        if ($calendar->export_ical) {
+        if ($calendar->export_ical && $calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar);
             $calenderExporter->exportCalendar();
         } else {

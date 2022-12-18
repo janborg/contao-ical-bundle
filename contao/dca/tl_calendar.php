@@ -33,12 +33,10 @@ $GLOBALS['TL_DCA']['tl_calendar']['palettes']['__selector__'] = array_merge(
 
 $GLOBALS['TL_DCA']['tl_calendar']['subpalettes'] = array_merge(
     [
-        'export_ical' => 'ical_alias,ical_prefix,ical_description,ical_export_start,ical_export_end',
+        'export_ical' => 'ical_alias,ical_prefix,ical_description,ical_export_start,ical_export_end,share_ical',
     ],
     $GLOBALS['TL_DCA']['tl_calendar']['subpalettes']
 );
-
-
 
 
 /*
@@ -53,12 +51,20 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'eval'                    => array('submitOnChange' => true, 'tl_class' => 'clr m12'),
         'sql'                     => "char(1) NOT NULL default ''"
     ]],
+    ['share_ical' => [
+        'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['share_ical'],
+        'exclude'                 => true,
+        'filter'                  => true,
+        'inputType'               => 'checkbox',
+        'eval'                    => array('tl_class' => 'clr m12'),
+        'sql'                     => "char(1) NOT NULL default ''"
+    ]],
     ['ical_alias' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['ical_alias'],
         'exclude'                 => true,
         'search'                  => true,
         'inputType'               => 'text',
-        'eval'                    => array('rgxp' => 'alnum', 'unique' => true, 'spaceToUnderscore' => true, 'maxlength' => 128, 'tl_class' => 'w50'),
+        'eval'                    => array('rgxp' => 'alnum','mandatory' => true, 'unique' => true, 'spaceToUnderscore' => true, 'maxlength' => 128, 'tl_class' => 'w50'),
         'sql'                     => "varbinary(128) NOT NULL default ''"
     ]],
     ['ical_prefix' => [
@@ -69,7 +75,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'eval'                    => array('maxlength' => 128, 'tl_class' => 'w50'),
         'sql'                     => "varchar(128) NOT NULL default ''"
     ]],
-
     ['ical_description' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['ical_description'],
         'exclude'                 => true,
@@ -78,8 +83,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'eval'                    => array('style' => 'height:60px;', 'tl_class' => 'clr'),
         'sql'                     => "text NULL"
     ]],
-
-
     ['ical_export_start' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['ical_export_start'],
         'exclude'                 => true,
@@ -89,7 +92,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'eval'                    => array('mandatory' => false, 'maxlength' => 10, 'rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'clr w50 wizard'),
         'sql'                     => "varchar(12) NOT NULL default ''"
     ]],
-
     ['ical_export_end' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['ical_export_end'],
         'exclude'                 => true,
