@@ -24,6 +24,9 @@ services:
             - '@contao.framework'
 
     Janborg\ContaoIcal\Controller\IcalCalendarController: 
-        tags: 
-            - 'controller.service_arguments'
+        arguments:
+            - '@contao.framework'
+            - '@security.helper'
+            - '@contao.security.token_checker'
+        tags: ['controller.service_arguments']
                 
