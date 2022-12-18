@@ -31,4 +31,4 @@ Das Bundle implementiert zwei neue Routes, über die eine Ical-Datei eines Event
 Damit ein Kalender über diese Route exportiert und importiert werden kann, muss die im jeweiligen Kalender aktiviert werden und der ical_alias hinterlegt werden. Wenn ein Kalender geschützt ist, muss man als berechtigter FE-User angemeldet sein.
 
 ### Über Datei unter "/share"
-Bei bedarf kann zusätzlich zur Route eine Datei <em>/share/ical_alias.ics</em> abgelegt werden. Hier kann keine Prüfung erfolgen, ob der Kalender geschätzt ist!
+Bei bedarf kann zusätzlich zur Route eine Datei <em>/share/ical_alias.ics</em> abgelegt werden. Hier kann keine Prüfung erfolgen, ob der Kalender geschützt ist!
