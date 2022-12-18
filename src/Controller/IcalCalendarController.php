@@ -2,24 +2,16 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of contao-ical-bundle.
- *
- * (c) Jan Lünborg
- *
- * @license MIT
- */
-
 namespace Janborg\ContaoIcal\Controller;
 
 use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\Exception\AccessDeniedException;
-use Contao\Date;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Security\Authentication\Token\TokenChecker;
 use Contao\CoreBundle\Security\ContaoCorePermissions;
+use Contao\Date;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Janborg\ContaoIcal\CalendarIcalExporter;
@@ -41,6 +33,7 @@ class IcalCalendarController
         $this->security = $security;
         $this->tokenChecker = $tokenChecker;
     }
+
     #[Route('/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]
     public function ical_event(Request $request, string $alias): CalendarResponse|Response
     {
@@ -57,18 +50,16 @@ class IcalCalendarController
         }
 
         $event = CalendarEventsModel::findByAlias($alias);
-        
+
         // check, if Event exists
-        if (null === $event) {  
+        if (null === $event) {
             throw new PageNotFoundException();
         }
 
         $calendar = CalendarModel::findById($event->pid);
 
         if ($calendar->protected && !$this->security->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, StringUtil::deserialize($calendar->groups, true))) {
-            
             throw new AccessDeniedException();
-
         }
 
         $calendarIcalExporter = new CalendarIcalExporter($calendar);
@@ -99,17 +90,13 @@ class IcalCalendarController
             $GLOBALS['objPage'] = $root;
         }
 
-        if (null === $calendar || !$calendar->export_ical) {  
-            
+        if (null === $calendar || !$calendar->export_ical) {
             throw new PageNotFoundException();
-        
         }
 
         // check, if calendar is protected
         if ($calendar->protected && !$this->security->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, StringUtil::deserialize($calendar->groups, true))) {
-            
             throw new AccessDeniedException();
-
         }
 
         $calendarIcalExporter = new CalendarIcalExporter($calendar);
@@ -127,7 +114,7 @@ class IcalCalendarController
         return new CalendarResponse($iCalContent, StringUtil::standardize($calendar->title));
     }
 
-    protected function findFirstPublishedRootByHostAndLanguage(string $host, string $language): ?PageModel
+    protected function findFirstPublishedRootByHostAndLanguage(string $host, string $language): PageModel|null
     {
         $t = PageModel::getTable();
         $columns = ["$t.type='root' AND ($t.dns=? OR $t.dns='') AND ($t.language=? OR $t.fallback='1')"];
