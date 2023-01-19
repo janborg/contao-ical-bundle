@@ -39,7 +39,7 @@ class GenerateIcalCron
 
     public function __invoke(): void
     {
-        $calendars = CalendarModel::findBy('export_ical=?', [1]);
+        $calendars = CalendarModel::findBy(['export_ical=?'], [1]);
 
         foreach ($calendars as $calendar) {
             $calendarExporter = new CalendarIcalExporter($calendar);
