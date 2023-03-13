@@ -34,10 +34,10 @@ class CalendarResponse extends Response
     /**
      * Construct calendar response.
      *
-     * @param Vcalendar $calendar Calendar
-     * @param string    $filename Filename
-     * @param int       $status   Response status
-     * @param array     $headers  Response headers
+     * @param Vcalendar    $calendar Calendar
+     * @param string       $filename Filename
+     * @param int          $status   Response status
+     * @param array<mixed> $headers  Response headers
      */
     public function __construct(Vcalendar $calendar, $filename, $status = 200, $headers = [])
     {

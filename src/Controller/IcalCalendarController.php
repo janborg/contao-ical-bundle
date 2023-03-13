@@ -23,9 +23,9 @@ use Symfony\Component\Security\Core\Security;
 
 class IcalCalendarController
 {
-    protected $framework;
-    protected $security;
-    protected $tokenChecker;
+    protected ContaoFramework $framework;
+    protected Security $security;
+    protected TokenChecker $tokenChecker;
 
     public function __construct(ContaoFramework $framework, Security $security, TokenChecker $tokenChecker)
     {
@@ -38,7 +38,7 @@ class IcalCalendarController
     public function ical_event(Request $request, string $alias): CalendarResponse|Response
     {
         // Initialize the Contao framework
-        $this->framework->initialize(true);
+        $this->framework->initialize();
 
         // Set the root page for the domain as the pageModel attribute
         $root = $this->findFirstPublishedRootByHostAndLanguage($request->getHost(), $request->getLocale());
@@ -79,7 +79,7 @@ class IcalCalendarController
         $calendar = CalendarModel::findOneByIcal_alias($ical_alias);
 
         // Initialize the Contao framework
-        $this->framework->initialize(true);
+        $this->framework->initialize();
 
         // Set the root page for the domain as the pageModel attribute
         $root = $this->findFirstPublishedRootByHostAndLanguage($request->getHost(), $request->getLocale());
