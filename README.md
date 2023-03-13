@@ -1,3 +1,7 @@
+[![GitHub license](https://img.shields.io/github/license/janborg/contao-ical-bundle)](https://github.com/janborg/contao-ical-bundle)
+![Packagist Version](https://img.shields.io/packagist/v/janborg/contao-ical-bundle)
+![Packagist](https://img.shields.io/packagist/dt/janborg/contao-ical-bundle)
+
 # Contao Ical Bundle
 
 Mit diesem Bundle kann für einen Contao Kalender eine ics-Datei erstellt werden, um diesen in anderen Programmen (z.Bsp. ICSx5, GoogleCalender, etc) zu abonnieren. 
