@@ -32,6 +32,16 @@ class CalendarResponse extends Response
     protected $calendar;
 
     /**
+     * @var string
+     */
+    protected $filename;
+
+    /**
+     * @var Vcalendar
+     */
+    protected $vCal;
+
+    /**
      * Construct calendar response.
      *
      * @param Vcalendar    $calendar Calendar
@@ -54,7 +64,7 @@ class CalendarResponse extends Response
     /**
      * Get default response headers for a calendar.
      *
-     * @return array
+     * @return array<string, string>
      */
     protected function getDefaultHeaders()
     {

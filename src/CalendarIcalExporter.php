@@ -28,10 +28,21 @@ use Kigkonsult\Icalcreator\Vevent;
 
 class CalendarIcalExporter
 {
-    /**
-     * @var CalendarModel
-     */
-    private $calendar;
+    public string $shareDir;
+
+    public string $exportFileName;
+
+    public int|null $startDate;
+
+    public int|null $endDate;
+
+    public CalendarModel $objCalendar;
+
+    public Vcalendar $vCal;
+
+    private string $iCalContent;
+
+    private File $objICalFile;
 
     public function __construct(CalendarModel $calendar)
     {
@@ -41,9 +52,9 @@ class CalendarIcalExporter
 
         $this->exportFileName = isset($calendar->ical_alias) ? $calendar->ical_alias.'.ics' : 'calendar'.$calendar->id.'.ics';
 
-        $this->startDate = '' !== $calendar->ical_export_start ? $calendar->ical_export_start : 0;
+        $this->startDate = null !== $calendar->ical_export_start ? $calendar->ical_export_start : 0;
 
-        $this->endDate = '' !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
+        $this->endDate = null !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
     }
 
     /**

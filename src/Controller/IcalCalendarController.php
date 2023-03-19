@@ -24,7 +24,9 @@ use Symfony\Component\Security\Core\Security;
 class IcalCalendarController
 {
     protected ContaoFramework $framework;
+
     protected Security $security;
+
     protected TokenChecker $tokenChecker;
 
     public function __construct(ContaoFramework $framework, Security $security, TokenChecker $tokenChecker)
@@ -76,7 +78,7 @@ class IcalCalendarController
     #[Route('/ical/calendar/{ical_alias}', name: 'janborg_calendar_ical_calendar', defaults: ['_scope' => 'frontend', '_token_check' => true])]
     public function ical_calendar(Request $request, string $ical_alias): CalendarResponse|Response
     {
-        $calendar = CalendarModel::findOneByIcal_alias($ical_alias);
+        $calendar = CalendarModel::findOneBy('ical_alias', $ical_alias);
 
         // Initialize the Contao framework
         $this->framework->initialize();
