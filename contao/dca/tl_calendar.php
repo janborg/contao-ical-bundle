@@ -90,7 +90,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'flag'                    => 8,
         'inputType'               => 'text',
         'eval'                    => array('mandatory' => false, 'maxlength' => 10, 'rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'clr w50 wizard'),
-        'sql'                     => "varchar(12) NOT NULL default ''"
+        'sql'                     => "int(10) NULL"
     ]],
     ['ical_export_end' => [
         'label'                   => &$GLOBALS['TL_LANG']['tl_calendar']['ical_export_end'],
@@ -99,7 +99,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'flag'                    => 8,
         'inputType'               => 'text',
         'eval'                    => array('mandatory' => false, 'maxlength' => 10, 'rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'),
-        'sql'                     => "varchar(12) NOT NULL default ''"
+        'sql'                     => "int(10) NULL"
     ]],
 $GLOBALS['TL_DCA']['tl_calendar']['fields']);
 

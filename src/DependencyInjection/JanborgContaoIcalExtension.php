@@ -44,6 +44,7 @@ class JanborgContaoIcalExtension extends Extension
 
         $loader->load('services.yaml');
         $loader->load('listener.yaml');
+        $loader->load('migrations.yaml');
 
         $rootKey = $this->getAlias();
 
