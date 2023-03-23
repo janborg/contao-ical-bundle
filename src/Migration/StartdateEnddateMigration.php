@@ -47,6 +47,11 @@ class StartdateEnddateMigration extends AbstractMigration
 
         $columns = $schemaManager->listTableColumns('tl_calendar');
 
+        if (!isset($columns['ical_export_start']) && !isset($columns['ical_export_end'])) {
+
+            return false;
+        }
+
         if (
             $columns['ical_export_start']->getType() instanceof StringType &&
             $columns['ical_export_end']->getType() instanceof StringType
