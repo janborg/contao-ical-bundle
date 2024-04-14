@@ -36,3 +36,30 @@ Damit ein Kalender über diese Route exportiert und importiert werden kann, muss
 
 ### Über Datei unter "/share"
 Bei bedarf kann zusätzlich zur Route eine Datei <em>/share/ical_alias.ics</em> abgelegt werden. Hier kann keine Prüfung erfolgen, ob der Kalender geschützt ist!
+
+## ical Daten über Hook modifizieren
+Es besteht die Möglichkeit die Eventdaten, die als ical bereitgestellt werden, zu modifizieren oder mit eigenen Feldern zu erweiteren. Dazu kann ein Hook `editVEvent` registriert werden.
+
+Beispiel:
+
+```php
+<?php
+
+namespace App\EventListener;
+
+use Contao\CalendarEventsModel;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
+use Kigkonsult\Icalcreator\Vevent;
+
+#[AsHook('editVEvent')]
+class EditVEventListener
+{
+    public function __invoke(Vevent $vEvent, CalendarEventsModel $objEvent): Vevent
+    {
+        // Add additional data or modify $vEvent …
+
+        return $vEvent;
+    }
+}
+
+```

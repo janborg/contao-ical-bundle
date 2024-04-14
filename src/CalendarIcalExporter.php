@@ -204,6 +204,13 @@ class CalendarIcalExporter
             $vEvent->setRrule($rrule);
         }
 
+        // HOOK: modify the vEvent
+        if (isset($GLOBALS['TL_HOOKS']['editVEvent']) && \is_array($GLOBALS['TL_HOOKS']['editVEvent'])) {
+            foreach ($GLOBALS['TL_HOOKS']['editVEvent'] as $callback) {
+                $vEvent = System::importStatic($callback[0])->{$callback[1]}($vEvent, $objEvent);
+            }
+        }
+
         $vCal->setComponent($vEvent);
     }
 
