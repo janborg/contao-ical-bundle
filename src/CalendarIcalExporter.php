@@ -62,9 +62,14 @@ class CalendarIcalExporter
      */
     public function exportCalendar(): void
     {
-        $this->createVCalendar($this->objCalendar);
-
         $objEvents = CalendarEventsModel::findCurrentByPid($this->objCalendar->id, $this->startDate, $this->endDate);
+
+        // only create VCalendar, if calendar has Events
+        if (null === $objEvents) {
+            return;
+        }
+
+        $this->createVCalendar($this->objCalendar);
 
         foreach ($objEvents as $objEvent) {
             $this->addEventToVcalendar($objEvent, $this->vCal);
