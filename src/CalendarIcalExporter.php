@@ -109,44 +109,44 @@ class CalendarIcalExporter
 
         switch ($objEvent->addTime) {
             case true:
-                //set StartDateTime
+                // set StartDateTime
                 $vEvent->setDtstart(
                     date(DateTimeFactory::$YmdTHis, $objEvent->startTime),
-                    [Vcalendar::VALUE => Vcalendar::DATE_TIME]
+                    [Vcalendar::VALUE => Vcalendar::DATE_TIME],
                 );
 
-                //set EndDateTime
+                // set EndDateTime
                 if ($objEvent->startTime < $objEvent->endTime) {
                     $vEvent->setDtend(
                         date(DateTimeFactory::$YmdTHis, $objEvent->endTime),
-                        [Vcalendar::VALUE => Vcalendar::DATE_TIME]
+                        [Vcalendar::VALUE => Vcalendar::DATE_TIME],
                     );
                 } else {
                     $vEvent->setDtend(
                         date(DateTimeFactory::$YmdTHis, $objEvent->startTime + System::getContainer()->getParameter('janborg_contao_ical.defaultEventDuration') * 60),
-                        [Vcalendar::VALUE => Vcalendar::DATE_TIME]
+                        [Vcalendar::VALUE => Vcalendar::DATE_TIME],
                     );
                 }
 
                 break;
 
             case false:
-                //set StartDateTime
+                // set StartDateTime
                 $vEvent->setDtstart(
                     date(DateTimeFactory::$Ymd, $objEvent->startDate),
-                    [Vcalendar::VALUE => Vcalendar::DATE]
+                    [Vcalendar::VALUE => Vcalendar::DATE],
                 );
 
-                //set EndDateTime
+                // set EndDateTime
                 if (!isset($objEvent->endDate) || 0 === $objEvent->endDate) {
                     $vEvent->setDtend(
                         date(DateTimeFactory::$Ymd, $objEvent->startDate + 24 * 60 * 60),
-                        [Vcalendar::VALUE => Vcalendar::DATE]
+                        [Vcalendar::VALUE => Vcalendar::DATE],
                     );
                 } else {
                     $vEvent->setDtend(
                         date(DateTimeFactory::$Ymd, $objEvent->endDate + 24 * 60 * 60),
-                        [Vcalendar::VALUE => Vcalendar::DATE]
+                        [Vcalendar::VALUE => Vcalendar::DATE],
                     );
                 }
                 break;
@@ -155,14 +155,14 @@ class CalendarIcalExporter
         $vEvent->setSummary(html_entity_decode(
             (isset($this->objCalendar->ical_prefix) ? $this->objCalendar->ical_prefix.' ' : '').$objEvent->title,
             ENT_QUOTES,
-            'UTF-8'
+            'UTF-8',
         ));
 
         if (isset($objEvent->teaser)) {
             $vEvent->setDescription(html_entity_decode(strip_tags(preg_replace(
                 '/<br \\/>/',
                 "\n",
-                System::getContainer()->get('contao.insert_tag.parser')->replaceInline($objEvent->teaser)
+                System::getContainer()->get('contao.insert_tag.parser')->replaceInline($objEvent->teaser),
             )), ENT_QUOTES, 'UTF-8'));
         }
 

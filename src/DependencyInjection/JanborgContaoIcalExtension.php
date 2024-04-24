@@ -23,9 +23,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class JanborgContaoIcalExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getAlias(): string
     {
         return Configuration::ROOT_KEY;

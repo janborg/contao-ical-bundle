@@ -52,8 +52,8 @@ class StartdateEnddateMigration extends AbstractMigration
         }
 
         if (
-            $columns['ical_export_start']->getType() instanceof StringType &&
-            $columns['ical_export_end']->getType() instanceof StringType
+            $columns['ical_export_start']->getType() instanceof StringType
+            && $columns['ical_export_end']->getType() instanceof StringType
         ) {
             return true;
         }
@@ -66,19 +66,19 @@ class StartdateEnddateMigration extends AbstractMigration
         $this->framework->initialize();
 
         $this->connection->executeQuery(
-            'ALTER TABLE tl_calendar CHANGE ical_export_start ical_export_start VARCHAR(12) NULL DEFAULT NULL'
+            'ALTER TABLE tl_calendar CHANGE ical_export_start ical_export_start VARCHAR(12) NULL DEFAULT NULL',
         );
 
         $this->connection->executeQuery(
-            'ALTER TABLE tl_calendar CHANGE ical_export_end ical_export_end VARCHAR(12) NULL DEFAULT NULL'
+            'ALTER TABLE tl_calendar CHANGE ical_export_end ical_export_end VARCHAR(12) NULL DEFAULT NULL',
         );
 
         $objCalendars = CalendarModel::findAll();
 
         foreach ($objCalendars as $objCalendar) {
-            '' === $objCalendar->ical_export_start ? $int_start = null : $int_start = (int) ($objCalendar->ical_export_start);
+            '' === $objCalendar->ical_export_start ? $int_start = null : $int_start = (int) $objCalendar->ical_export_start;
 
-            '' === $objCalendar->ical_export_end ? $int_end = null : $int_end = (int) ($objCalendar->ical_export_end);
+            '' === $objCalendar->ical_export_end ? $int_end = null : $int_end = (int) $objCalendar->ical_export_end;
 
             $this->connection->executeQuery(
                 '
@@ -94,21 +94,21 @@ class StartdateEnddateMigration extends AbstractMigration
                     $int_start,
                     $int_end,
                     $objCalendar->id,
-                ]
+                ],
             );
         }
 
         $this->connection->executeQuery(
-            'ALTER TABLE tl_calendar CHANGE ical_export_start ical_export_start INT(10) NULL DEFAULT NULL'
+            'ALTER TABLE tl_calendar CHANGE ical_export_start ical_export_start INT(10) NULL DEFAULT NULL',
         );
 
         $this->connection->executeQuery(
-            'ALTER TABLE tl_calendar CHANGE ical_export_end ical_export_end INT(10) NULL DEFAULT NULL'
+            'ALTER TABLE tl_calendar CHANGE ical_export_end ical_export_end INT(10) NULL DEFAULT NULL',
         );
 
         return $this->createResult(
             true,
-            'Changed type for ical_export_start and ical_export_end to INT'
+            'Changed type for ical_export_start and ical_export_end to INT',
         );
     }
 }

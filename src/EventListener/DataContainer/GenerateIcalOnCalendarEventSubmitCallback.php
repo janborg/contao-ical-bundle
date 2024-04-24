@@ -35,13 +35,13 @@ class GenerateIcalOnCalendarEventSubmitCallback
     /**
      * @Callback(table="tl_calendar_events", target="config.onsubmit")
      */
-    public function __invoke(DataContainer $dc = null): void
+    public function __invoke(DataContainer|null $dc = null): void
     {
         if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
             return;
         }
 
-        $calendar = CalendarModel::findByPk(CalendarEventsModel::findById($dc->id)->pid);
+        $calendar = CalendarModel::findById(CalendarEventsModel::findById($dc->id)->pid);
 
         if (null !== $calendar && $calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar);

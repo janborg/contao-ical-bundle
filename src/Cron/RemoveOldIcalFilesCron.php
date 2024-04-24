@@ -54,7 +54,7 @@ class RemoveOldIcalFilesCron
             if (
                 null === CalendarModel::findBy(
                     ['export_ical = ?', 'ical_alias = ?'],
-                    [true, $objFile->filename]
+                    [true, $objFile->filename],
                 )
                 && 'ics' === $objFile->extension
             ) {
