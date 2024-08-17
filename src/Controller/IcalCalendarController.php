@@ -14,6 +14,7 @@ use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\Date;
 use Contao\PageModel;
 use Contao\StringUtil;
+use Contao\System;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Janborg\ContaoIcal\Response\CalendarResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,9 +106,13 @@ class IcalCalendarController
 
         $calendarIcalExporter->createVCalendar($calendar);
 
-        $events = CalendarEventsModel::findByPid($calendar->id);
+        $startDate = null !== $calendar->ical_export_start ? $calendar->ical_export_start : 0;
 
-        foreach ($events as $event) {
+        $endDate = null !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
+
+        $objEvents = CalendarEventsModel::findCurrentByPid($calendar->id, $startDate, $endDate);
+
+        foreach ($objEvents as $event) {
             $calendarIcalExporter->addEventToVcalendar($event, $calendarIcalExporter->vCal);
         }
 
