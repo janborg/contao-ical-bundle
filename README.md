@@ -14,13 +14,13 @@ Das Bundle verwendet eine Standardkonfiguration.Bei Bedarf können diese Einstel
 
 Parameters:
 - **defaultEndDateDays:** 
-Maximale Anzahl Tage in der Zukunft an, die im Ical-Kalender berücksichtigt werden, wenn kein Ende angegeben wird
-- **defaultEventDuration:** Zeit in Minuten an, die als Dauer für ein Event angegeben wird, wenn der Termin eine Start-, aber keine Endzeit hat
+Maximale Anzahl an Tagen in der Zukunft, die im Ical-Kalender berücksichtigt werden, wenn kein Ende angegeben wird
+- **defaultEventDuration:** Zeit in Minuten, die als Dauer für ein Event angegeben wird, wenn der Termin eine Start-, aber keine Endzeit hat
 
 ```yaml
 # config/config.yml
 # Contao Ical (default settings)
-janborg_contaoical:
+janborg_contao_ical:
   defaultEndDateDays: 365
   defaultEventDuration: 60
 ```
@@ -32,7 +32,7 @@ Das Bundle implementiert zwei neue Routes, über die eine Ical-Datei eines Event
 - **/ical/event/{alias}**
 Über diese Route kann für jedes Event eine entsprechende *.ics Datei heruntergeladen werden, es sei denn, der überliegende Kalender ist geschützt. In diesem Fall muss man als berechtigter FE-User angemeldet sein.
 - **/ical/calendar/{ical_alias}**
-Damit ein Kalender über diese Route exportiert und importiert werden kann, muss die im jeweiligen Kalender aktiviert werden und der ical_alias hinterlegt werden. Wenn ein Kalender geschützt ist, muss man als berechtigter FE-User angemeldet sein.
+Damit ein Kalender über diese Route exportiert und importiert werden kann, muss dies im jeweiligen Kalender aktiviert und der ical_alias hinterlegt werden. Wenn ein Kalender geschützt ist, muss man als berechtigter FE-User angemeldet sein.
 
 ### Über Datei unter "/share"
 Bei bedarf kann zusätzlich zur Route eine Datei <em>/share/ical_alias.ics</em> abgelegt werden. Hier kann keine Prüfung erfolgen, ob der Kalender geschützt ist!
