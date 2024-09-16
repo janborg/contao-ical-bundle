@@ -32,11 +32,6 @@ class CalendarResponse extends Response
     protected $calendar;
 
     /**
-     * @var string
-     */
-    protected $filename;
-
-    /**
      * @var Vcalendar
      */
     protected $vCal;
@@ -49,11 +44,13 @@ class CalendarResponse extends Response
      * @param int          $status   Response status
      * @param array<mixed> $headers  Response headers
      */
-    public function __construct(Vcalendar $calendar, $filename, $status = 200, $headers = [])
-    {
+    public function __construct(
+        Vcalendar $calendar,
+        protected $filename,
+        $status = 200,
+        $headers = [],
+    ) {
         $this->vCal = $calendar;
-
-        $this->filename = $filename;
 
         $content = $this->vCal->createCalendar();
 

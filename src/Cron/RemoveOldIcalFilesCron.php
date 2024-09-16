@@ -17,25 +17,17 @@ declare(strict_types=1);
 namespace Janborg\ContaoIcal\Cron;
 
 use Contao\CalendarModel;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\ServiceAnnotation\CronJob;
 use Contao\File;
 use Contao\StringUtil;
 use Contao\System;
 
-/**
- * @CronJob("hourly")
- */
+#[AsCronJob('hourly')]
 class RemoveOldIcalFilesCron
 {
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-
-    public function __construct(ContaoFramework $framework)
+    public function __construct(private readonly ContaoFramework $framework)
     {
-        $this->framework = $framework;
         $this->framework->initialize();
     }
 

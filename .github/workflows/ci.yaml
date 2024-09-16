@@ -9,24 +9,24 @@ on:
 
 jobs:
   ecs:
-    name: ECS
+    name: ecs
     runs-on: ubuntu-latest
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.3
           extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
           coverage: none
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install the dependencies
         run: composer install --no-interaction --no-suggest
 
       - name: Check the coding style
-        run: vendor/bin/ecs check src tests --config ecs.php --ansi --fix
+        run: vendor/bin/ecs check src tests config --config ecs.php --ansi --fix
 
   phpstan:
     name: phpstan
@@ -35,18 +35,38 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.3
           extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
           coverage: none
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install the dependencies
         run: composer install --no-interaction --no-suggest
 
       - name: Analyze the code
-        run: vendor/bin/phpstan analyse src tests --configuration phpstan.neon --no-progress --ansi
+        run: vendor/bin/phpstan analyse src tests config --configuration phpstan.neon --no-progress --ansi
+
+  depcheck:
+    name: depcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
+          coverage: none
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install the dependencies
+        run: composer install --no-interaction --no-suggest
+
+      - name: Check the dependencies
+        run: vendor/bin/composer-dependency-analyser --config=depcheck.php
 
   tests:
     name: PHP ${{ matrix.php }}
@@ -54,7 +74,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1, 8.2]
+        php: [8.1, 8.2, 8.3]
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -64,7 +84,7 @@ jobs:
           coverage: none
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install the dependencies
         run: composer install --no-interaction --no-suggest

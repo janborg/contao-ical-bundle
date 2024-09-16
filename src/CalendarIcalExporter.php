@@ -36,25 +36,21 @@ class CalendarIcalExporter
 
     public int|null $endDate;
 
-    public CalendarModel $objCalendar;
-
     public Vcalendar $vCal;
 
     private string $iCalContent;
 
     private File $objICalFile;
 
-    public function __construct(CalendarModel $calendar)
+    public function __construct(public CalendarModel $objCalendar)
     {
-        $this->objCalendar = $calendar;
-
         $this->shareDir = System::getContainer()->getParameter('contao.web_dir').'/share/';
 
-        $this->exportFileName = isset($calendar->ical_alias) ? $calendar->ical_alias.'.ics' : 'calendar'.$calendar->id.'.ics';
+        $this->exportFileName = isset($this->objCalendar->ical_alias) ? $this->objCalendar->ical_alias.'.ics' : 'calendar'.$this->objCalendar->id.'.ics';
 
-        $this->startDate = null !== $calendar->ical_export_start ? $calendar->ical_export_start : 0;
+        $this->startDate = $this->objCalendar->ical_export_start ?? 0;
 
-        $this->endDate = null !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
+        $this->endDate = $this->objCalendar->ical_export_end ?? time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
     }
 
     /**
@@ -176,7 +172,7 @@ class CalendarIcalExporter
             $unit = $arrRepeat['unit'];
 
             if (1 === $arg) {
-                $unit = substr($unit, 0, -1);
+                $unit = substr((string) $unit, 0, -1);
             }
 
             $freq = 'YEARLY';
