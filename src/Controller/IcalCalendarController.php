@@ -24,8 +24,11 @@ use Symfony\Component\Security\Core\Security;
 
 class IcalCalendarController
 {
-    public function __construct(protected ContaoFramework $framework, protected Security $security, protected TokenChecker $tokenChecker)
-    {
+    public function __construct(
+        protected ContaoFramework $framework,
+        protected Security $security,
+        protected TokenChecker $tokenChecker,
+    ) {
     }
 
     #[Route('/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]

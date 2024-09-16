@@ -25,8 +25,10 @@ use Doctrine\DBAL\Types\StringType;
 
 class StartdateEnddateMigration extends AbstractMigration
 {
-    public function __construct(private readonly Connection $connection, private readonly ContaoFramework $framework)
-    {
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly ContaoFramework $framework,
+    ) {
     }
 
     public function shouldRun(): bool

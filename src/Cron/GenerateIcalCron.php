@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Janborg\ContaoIcal\Cron;
 
 use Contao\CalendarModel;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\ServiceAnnotation\CronJob;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 
-#[\Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob('hourly')]
+#[AsCronJob('hourly')]
 class GenerateIcalCron
 {
     public function __construct(private readonly ContaoFramework $framework)

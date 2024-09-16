@@ -44,8 +44,12 @@ class CalendarResponse extends Response
      * @param int          $status   Response status
      * @param array<mixed> $headers  Response headers
      */
-    public function __construct(Vcalendar $calendar, protected $filename, $status = 200, $headers = [])
-    {
+    public function __construct(
+        Vcalendar $calendar,
+        protected $filename,
+        $status = 200,
+        $headers = [],
+    ) {
         $this->vCal = $calendar;
 
         $content = $this->vCal->createCalendar();

@@ -18,7 +18,7 @@ namespace Janborg\ContaoIcal\EventListener\DataContainer;
 
 use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
-use Contao\CoreBundle\ServiceAnnotation\Callback;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -29,7 +29,7 @@ class GenerateIcalOnCalendarEventSubmitCallback
     {
     }
 
-    #[\Contao\CoreBundle\DependencyInjection\Attribute\AsCallback(table: 'tl_calendar_events', target: 'config.onsubmit')]
+    #[AsCallback(table: 'tl_calendar_events', target: 'config.onsubmit')]
     public function __invoke(DataContainer|null $dc = null): void
     {
         if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
