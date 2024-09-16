@@ -25,16 +25,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class GenerateIcalOnCalendarEventSubmitCallback
 {
-    private RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
     }
 
-    /**
-     * @Callback(table="tl_calendar_events", target="config.onsubmit")
-     */
+    #[\Contao\CoreBundle\DependencyInjection\Attribute\AsCallback(table: 'tl_calendar_events', target: 'config.onsubmit')]
     public function __invoke(DataContainer|null $dc = null): void
     {
         if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {

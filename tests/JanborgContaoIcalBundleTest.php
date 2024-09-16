@@ -25,6 +25,6 @@ class JanborgContaoIcalBundleTest extends TestCase
     {
         $bundle = new JanborgContaoIcalBundle();
 
-        $this->assertInstanceOf('Janborg\ContaoIcal\JanborgContaoIcalBundle', $bundle);
+        $this->assertInstanceOf(\Janborg\ContaoIcal\JanborgContaoIcalBundle::class, $bundle);
     }
 }

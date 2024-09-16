@@ -24,17 +24,8 @@ use Symfony\Component\Security\Core\Security;
 
 class IcalCalendarController
 {
-    protected ContaoFramework $framework;
-
-    protected Security $security;
-
-    protected TokenChecker $tokenChecker;
-
-    public function __construct(ContaoFramework $framework, Security $security, TokenChecker $tokenChecker)
+    public function __construct(protected ContaoFramework $framework, protected Security $security, protected TokenChecker $tokenChecker)
     {
-        $this->framework = $framework;
-        $this->security = $security;
-        $this->tokenChecker = $tokenChecker;
     }
 
     #[Route('/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]
@@ -106,9 +97,9 @@ class IcalCalendarController
 
         $calendarIcalExporter->createVCalendar($calendar);
 
-        $startDate = null !== $calendar->ical_export_start ? $calendar->ical_export_start : 0;
+        $startDate = $calendar->ical_export_start ?? 0;
 
-        $endDate = null !== $calendar->ical_export_end ? $calendar->ical_export_end : time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
+        $endDate = $calendar->ical_export_end ?? time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
 
         $objEvents = CalendarEventsModel::findCurrentByPid($calendar->id, $startDate, $endDate);
 

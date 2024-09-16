@@ -21,19 +21,11 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\ServiceAnnotation\CronJob;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 
-/**
- * @CronJob("hourly")
- */
+#[\Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob('hourly')]
 class GenerateIcalCron
 {
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-
-    public function __construct(ContaoFramework $framework)
+    public function __construct(private readonly ContaoFramework $framework)
     {
-        $this->framework = $framework;
         $this->framework->initialize();
     }
 

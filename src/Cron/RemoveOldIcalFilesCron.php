@@ -23,19 +23,11 @@ use Contao\File;
 use Contao\StringUtil;
 use Contao\System;
 
-/**
- * @CronJob("hourly")
- */
+#[\Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob('hourly')]
 class RemoveOldIcalFilesCron
 {
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-
-    public function __construct(ContaoFramework $framework)
+    public function __construct(private readonly ContaoFramework $framework)
     {
-        $this->framework = $framework;
         $this->framework->initialize();
     }
 
