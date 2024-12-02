@@ -16,17 +16,17 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\ContaoManager;
 
-use Contao\CoreBundle\ContaoCoreBundle;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouteCollection;
 use Contao\CalendarBundle\ContaoCalendarBundle;
-use Janborg\ContaoIcal\JanborgContaoIcalBundle;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
+use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
+use Janborg\ContaoIcal\JanborgContaoIcalBundle;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\RouteCollection;
 
 class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
@@ -51,6 +51,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-            ->resolve(__DIR__ . '/../Controller/IcalCalendarController.php', Kernel::MAJOR_VERSION >= 6 ? 'attribute' : 'annotation');
+            ->resolve(__DIR__.'/../Controller/IcalCalendarController.php', Kernel::MAJOR_VERSION >= 6 ? 'attribute' : 'annotation')
+            ->load(__DIR__.'/../Controller/IcalCalendarController.php')
+        ;
     }
 }
