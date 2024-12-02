@@ -17,10 +17,10 @@ use Contao\StringUtil;
 use Contao\System;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Janborg\ContaoIcal\Response\CalendarResponse;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 class IcalCalendarController
 {
@@ -31,7 +31,7 @@ class IcalCalendarController
     ) {
     }
 
-    #[Route('/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]
+    #[Route(path: '/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]
     public function ical_event(Request $request, string $alias): CalendarResponse|Response
     {
         // Initialize the Contao framework
