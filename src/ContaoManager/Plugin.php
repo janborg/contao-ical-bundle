@@ -51,8 +51,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-            ->resolve(__DIR__.'/../Controller/IcalCalendarController.php', Kernel::MAJOR_VERSION >= 6 ? 'attribute' : 'annotation')
-            ->load(__DIR__.'/../Controller/IcalCalendarController.php')
+            ->resolve(__DIR__.'/../config/routes.yaml')
+            ->load(__DIR__.'/../config/routes.yaml')
         ;
     }
 }
