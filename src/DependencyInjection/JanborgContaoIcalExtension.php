@@ -33,18 +33,17 @@ class JanborgContaoIcalExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
+        $fileLocator =new FileLocator(__DIR__.'/../../config');
+        $loader = new YamlFileLoader($container, $fileLocator);
         $configuration = new Configuration();
-
-        $config = $this->processConfiguration($configuration, $configs);
-
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
 
         $loader->load('services.yaml');
         $loader->load('listener.yaml');
         $loader->load('migrations.yaml');
 
         $rootKey = $this->getAlias();
-
+        $config = $this->processConfiguration($configuration, $configs);
+        
         // Configuration
         $container->setParameter($rootKey.'.defaultEndDateDays', $config['defaultEndDateDays']);
         $container->setParameter($rootKey.'.defaultEventDuration', $config['defaultEventDuration']);
