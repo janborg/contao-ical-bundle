@@ -33,7 +33,7 @@ class JanborgContaoIcalExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $fileLocator =new FileLocator(__DIR__.'/../../config');
+        $fileLocator = new FileLocator(__DIR__.'/../../config');
         $loader = new YamlFileLoader($container, $fileLocator);
         $configuration = new Configuration();
 
@@ -43,7 +43,7 @@ class JanborgContaoIcalExtension extends Extension
 
         $rootKey = $this->getAlias();
         $config = $this->processConfiguration($configuration, $configs);
-        
+
         // Configuration
         $container->setParameter($rootKey.'.defaultEndDateDays', $config['defaultEndDateDays']);
         $container->setParameter($rootKey.'.defaultEventDuration', $config['defaultEventDuration']);
