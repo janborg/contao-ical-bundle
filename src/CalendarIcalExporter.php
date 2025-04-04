@@ -48,7 +48,7 @@ class CalendarIcalExporter
 
         $this->exportFileName = isset($this->objCalendar->ical_alias) ? $this->objCalendar->ical_alias.'.ics' : 'calendar'.$this->objCalendar->id.'.ics';
 
-        $this->startDate = $this->objCalendar->ical_export_start ?? 0;
+        $this->startDate = $this->objCalendar->ical_export_start ?? time();
 
         $this->endDate = $this->objCalendar->ical_export_end ?? time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
     }

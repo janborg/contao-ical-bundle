@@ -100,7 +100,7 @@ class IcalCalendarController
 
         $calendarIcalExporter->createVCalendar($calendar);
 
-        $startDate = $calendar->ical_export_start ?? 0;
+        $startDate = $calendar->ical_export_start ?? time();
 
         $endDate = $calendar->ical_export_end ?? time() + System::getContainer()->getParameter('janborg_contao_ical.defaultEndDateDays') * 24 * 3600;
 
