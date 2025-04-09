@@ -156,7 +156,7 @@ class CalendarIcalExporter
 
         if (isset($objEvent->teaser)) {
             $vEvent->setDescription(html_entity_decode(strip_tags(preg_replace(
-                '/<br \\/>/',
+                ['/<br \\/>/', '/<br>/'],
                 "\n",
                 System::getContainer()->get('contao.insert_tag.parser')->replaceInline($objEvent->teaser),
             )), ENT_QUOTES, 'UTF-8'));
