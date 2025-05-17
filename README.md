@@ -37,9 +37,42 @@ Damit ein Kalender über diese Route exportiert und importiert werden kann, muss
 ### Über Datei unter "/share"
 Bei bedarf kann zusätzlich zur Route eine Datei <em>/share/ical_alias.ics</em> abgelegt werden. Hier kann keine Prüfung erfolgen, ob der Kalender geschützt ist!
 
-## ical Daten über Hook modifizieren
-Es besteht die Möglichkeit die Eventdaten, die als ical bereitgestellt werden, zu modifizieren oder mit eigenen Feldern zu erweiteren. Dazu kann ein Hook `editVEvent` registriert werden.
+## ical in der /App modifizieren
+Es besteht die Möglichkeit die Eventdaten, die als ical bereitgestellt werden, zu modifizieren oder mit eigenen Feldern zu erweiteren. Dazu kann ein EventListener auf den Event `EditVeventEvent` oder ein Hook `editVEvent` registriert werden.
 
+### ical Daten über EventListener modifizieren
+Beispiel:
+
+```php
+<?php
+
+namespace App\EventListener;
+
+use Janborg\ContaoIcal\Event\EditVeventEvent;
+use Kigkonsult\Icalcreator\Vevent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+#[AsEventListener(event: EditVEventEvent::class)]
+class EditVeventListener
+{
+    public function __invoke(EditVeventEvent $event): Vevent
+    {
+
+        // Get the Vevent object and the CalendarEventsModel object from the event
+        $vevent = $event->getVevent();
+        $calendarEvent = $event->getCalendarEvent();
+
+        // Modify the Vevent object as needed
+
+        // return the modified Vevent object
+        return $vevent;
+    }
+}
+
+```
+
+
+### ical Daten über Hook modifizieren (veraltet, nicht empfohlen)
 Beispiel:
 
 ```php
