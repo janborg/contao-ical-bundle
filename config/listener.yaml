@@ -11,8 +11,10 @@ services:
         class: Janborg\ContaoIcal\EventListener\DataContainer\GenerateIcalOnCalendarSubmitCallback   
         arguments:
             - '@request_stack'
+            - '@event_dispatcher'
 
     contaoical.calendarevents.generateical.callback:
         class: Janborg\ContaoIcal\EventListener\DataContainer\GenerateIcalOnCalendarEventSubmitCallback
         arguments:
             - '@request_stack'
+            - '@event_dispatcher'

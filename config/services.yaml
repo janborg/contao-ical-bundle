@@ -18,15 +18,22 @@ services:
     Janborg\ContaoIcal\Cron\GenerateIcalCron:
         arguments:
             - '@contao.framework'
+            - '@event_dispatcher'
 
     Janborg\ContaoIcal\Cron\RemoveOldIcalFilesCron:
         arguments:
             - '@contao.framework'
+            - '@event_dispatcher'
 
     Janborg\ContaoIcal\Controller\IcalCalendarController: 
         arguments:
             - '@contao.framework'
             - '@security.helper'
             - '@contao.security.token_checker'
+            - '@event_dispatcher'
         tags: ['controller.service_arguments']
                 
+    Janborg\ContaoIcal\CalendarIcalExporter:
+        arguments: 
+            - '@contao.calendar_model'
+            - '@event_dispatcher'

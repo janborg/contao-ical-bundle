@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class IcalCalendarController
 {
@@ -28,6 +29,7 @@ class IcalCalendarController
         protected ContaoFramework $framework,
         protected Security $security,
         protected TokenChecker $tokenChecker,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -59,7 +61,7 @@ class IcalCalendarController
             throw new AccessDeniedException();
         }
 
-        $calendarIcalExporter = new CalendarIcalExporter($calendar);
+        $calendarIcalExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
 
         $calendarIcalExporter->createVCalendar($calendar);
 
@@ -96,7 +98,7 @@ class IcalCalendarController
             throw new AccessDeniedException();
         }
 
-        $calendarIcalExporter = new CalendarIcalExporter($calendar);
+        $calendarIcalExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
 
         $calendarIcalExporter->createVCalendar($calendar);
 
