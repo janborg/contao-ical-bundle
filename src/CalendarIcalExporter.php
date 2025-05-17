@@ -22,9 +22,11 @@ use Contao\Config;
 use Contao\File;
 use Contao\StringUtil;
 use Contao\System;
+use Janborg\ContaoIcal\Event\EditVeventEvent;
 use Kigkonsult\Icalcreator\Util\DateTimeFactory;
 use Kigkonsult\Icalcreator\Vcalendar;
 use Kigkonsult\Icalcreator\Vevent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class CalendarIcalExporter
 {
@@ -42,8 +44,10 @@ class CalendarIcalExporter
 
     private File $objICalFile;
 
-    public function __construct(public CalendarModel $objCalendar)
-    {
+    public function __construct(
+        public CalendarModel $objCalendar,
+        private EventDispatcherInterface $eventDispatcher,
+    ) {
         $this->shareDir = System::getContainer()->getParameter('contao.web_dir').'/share/';
 
         $this->exportFileName = isset($this->objCalendar->ical_alias) ? $this->objCalendar->ical_alias.'.ics' : 'calendar'.$this->objCalendar->id.'.ics';
@@ -193,7 +197,6 @@ class CalendarIcalExporter
             }
 
             $rrule = ['FREQ' => $freq];
-
             if ($objEvent->recurrences > 0) {
                 $rrule['count'] = $objEvent->recurrences;
             }
@@ -211,6 +214,12 @@ class CalendarIcalExporter
                 $vEvent = System::importStatic($callback[0])->{$callback[1]}($vEvent, $objEvent);
             }
         }
+
+        // EVENT;  EditVeventEvent
+        $event = new EditVeventEvent($vEvent, $objEvent);
+        $this->eventDispatcher->dispatch($event);
+
+        $vEvent = $event->getVevent();
 
         $vCal->setComponent($vEvent);
     }

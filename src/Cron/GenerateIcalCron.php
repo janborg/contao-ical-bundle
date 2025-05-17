@@ -20,12 +20,15 @@ use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Janborg\ContaoIcal\CalendarIcalExporter;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[AsCronJob('hourly')]
 class GenerateIcalCron
 {
-    public function __construct(private readonly ContaoFramework $framework)
-    {
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
         $this->framework->initialize();
     }
 
@@ -34,7 +37,7 @@ class GenerateIcalCron
         $calendars = CalendarModel::findBy(['export_ical=?'], [1]);
 
         foreach ($calendars as $calendar) {
-            $calendarExporter = new CalendarIcalExporter($calendar);
+            $calendarExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
 
             $calendarExporter->exportCalendar();
         }

@@ -21,11 +21,14 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class GenerateIcalOnCalendarSubmitCallback
 {
-    public function __construct(private readonly RequestStack $requestStack)
-    {
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     #[AsCallback(table: 'tl_calendar', target: 'config.onsubmit')]
@@ -38,7 +41,7 @@ class GenerateIcalOnCalendarSubmitCallback
         $calendar = CalendarModel::findById($dc->id);
 
         if ($calendar->export_ical && $calendar->share_ical) {
-            $calenderExporter = new CalendarIcalExporter($calendar);
+            $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
         } else {
             return;
