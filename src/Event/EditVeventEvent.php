@@ -26,7 +26,7 @@ class EditVeventEvent extends Event
 
     public function __construct(
         private Vevent $vevent,
-        private CalendarEventsModel $calendarEvent,
+        private readonly CalendarEventsModel $calendarEvent,
     ) {
     }
 
