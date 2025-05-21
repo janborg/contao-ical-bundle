@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\EventListener\DataContainer;
 
+use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
@@ -43,7 +44,19 @@ class GenerateIcalOnCalendarSubmitCallback
         if ($calendar->export_ical && $calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
-        } else {
+
+            if ($calendar->share_ical_events) {
+                $calendarEvents = CalendarEventsModel::findByPid($dc->id);
+
+                if (null !== $calendarEvents) {
+                    foreach ($calendarEvents as $calendarEvent) {
+                        $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
+                        $calenderExporter->exportCalendarEvent($calendarEvent);
+                    }
+                }
+            }
+        } else { 
+            // elseif share_ical_events ?!
             return;
         }
     }
