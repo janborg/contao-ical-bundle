@@ -41,7 +41,7 @@ class GenerateIcalOnCalendarEventSubmitCallback
 
         $calendar = CalendarModel::findById(CalendarEventsModel::findById($dc->id)->pid);
 
-        if (null !== $calendar && $calendar->share_ical) {
+        if (null !== $calendar && $calendar->export_ical && $calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
         }
