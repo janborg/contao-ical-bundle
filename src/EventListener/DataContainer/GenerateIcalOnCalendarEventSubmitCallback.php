@@ -39,11 +39,17 @@ class GenerateIcalOnCalendarEventSubmitCallback
             return;
         }
 
-        $calendar = CalendarModel::findById(CalendarEventsModel::findById($dc->id)->pid);
+        $calendarEvent = CalendarEventsModel::findById($dc->id);
+        $calendar = CalendarModel::findById($calendarEvent->pid);
 
         if (null !== $calendar && $calendar->export_ical && $calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
+        }
+
+        if (null !== $calendar && $calendar->export_ical && $calendar->share_ical_events) {
+            $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
+            $calenderExporter->exportCalendarEvent($calendarEvent);
         }
     }
 }
