@@ -90,7 +90,7 @@ class CalendarIcalExporter
         
         $this->addEventToVcalendar($calendarEvent, $this->vCal);
 
-        $this->saveIcalFile(StringUtil::stripRootDir($this->shareDir), $this->objCalendar->ical_alias . '_' . $calendarEvent->alias . '.ics');
+        $this->saveIcalFile(StringUtil::stripRootDir($this->shareDir), $calendarEvent->alias . '.ics');
     }
 
     /**
