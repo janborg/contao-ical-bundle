@@ -16,12 +16,13 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\Cron;
 
-use Contao\CalendarModel;
-use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\File;
-use Contao\StringUtil;
 use Contao\System;
+use Contao\StringUtil;
+use Contao\CalendarModel;
+use Contao\CalendarEventsModel;
+use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 
 #[AsCronJob('hourly')]
 class RemoveOldIcalFilesCron
@@ -33,7 +34,7 @@ class RemoveOldIcalFilesCron
 
     public function __invoke(): void
     {
-        $shareDir = System::getContainer()->getParameter('contao.web_dir').'/share/';
+        $shareDir = System::getContainer()->getParameter('contao.web_dir').'/share/'; // TODO: use DI
 
         // Delete old files
         foreach (scandir($shareDir) as $file) {
@@ -43,17 +44,46 @@ class RemoveOldIcalFilesCron
 
             $objFile = new File(StringUtil::stripRootDir($shareDir).$file);
 
-            if (
-                null === CalendarModel::findBy(
-                    ['export_ical = ?', 'ical_alias = ?'],
-                    [true, $objFile->filename],
-                )
-                && 'ics' === $objFile->extension
-            ) {
-                $objFile->delete();
+            $calendar = CalendarModel::findByIcal_alias($objFile->filename);
 
-                System::getContainer()->get('monolog.logger.contao.cron')->info('Verwaiste Ical Datei "'.$objFile->path.'" gelöscht');
+            $calendarEvent = CalendarEventsModel::findByAlias($objFile->filename);
+
+            // check if file_extension is 'ics'
+            if ('ics' !== $objFile->extension) {
+                continue;
             }
+
+            // delete file if neither $calendar nor calendarEvent exists with alias = filename 
+            if (null === $calendar && null === $calendarEvent) {
+                $objFile->delete();
+                // TODO: use DI
+                System::getContainer()->get('monolog.logger.contao.cron')->info('Verwaiste Ical Datei "'.$objFile->path.'" gelöscht');
+                continue;
+            }    
+
+            // ckeck if file is not linked to any calendar with export_ical = true, ical_share = true and ical_alias = filename
+            if (
+                null !== $calendar &&
+                $calendar->export_ical && 
+                $calendar->share_ical
+            ) {
+                continue;
+            }
+            
+            $parentCalendar = CalendarModel::findByPk($calendarEvent->pid);
+            // check if file is not linked to any calendarEvent with alias = filename and calendar has export_ical = true and ical_share = true 
+            if (
+                null !== $calendarEvent &&
+                null !== $parentCalendar &&
+                $parentCalendar->export_ical && 
+                $parentCalendar->share_ical_events
+            ) { 
+                continue;                
+            }
+
+            $objFile->delete();
+            // TODO: use DI
+            System::getContainer()->get('monolog.logger.contao.cron')->info('Verwaiste Ical Datei "'.$objFile->path.'" gelöscht');
         }
     }
 }
