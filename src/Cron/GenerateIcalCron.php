@@ -16,12 +16,16 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\Cron;
 
+use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Generates iCal files for calendars and their events on a hourly basis.
+ */
 #[AsCronJob('hourly')]
 class GenerateIcalCron
 {
@@ -34,12 +38,42 @@ class GenerateIcalCron
 
     public function __invoke(): void
     {
-        $calendars = CalendarModel::findBy(['export_ical=?'], [1]);
+        // find all Calendars to be exported
+        $calendars = CalendarModel::findBy(
+            ['export_ical=?'],
+            [true],
+        );
+
+        if (null === $calendars) {
+            return;
+        }
 
         foreach ($calendars as $calendar) {
-            $calendarExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
+            // skip calendar, if neither share_ical nor share_ical_events is true.
+            if (!$calendar->share_ical && !$calendar->share_ical_events) {
+                continue;
+            }
 
-            $calendarExporter->exportCalendar();
+            // skip calendar, if protected
+            if ($calendar->protected) {
+                continue;
+            }
+
+            // Export ics for the Calendar in public/share.
+            if ($calendar->share_ical) {
+                $calendarExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
+                $calendarExporter->exportCalendar();
+            }
+
+            // Export ics for each Event in public/share.
+            if ($calendar->share_ical_events) {
+                $events = CalendarEventsModel::findBy('pid', $calendar->id);
+
+                foreach ($events as $event) {
+                    $eventExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
+                    $eventExporter->exportCalendarEvent($event);
+                }
+            }
         }
     }
 }

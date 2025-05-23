@@ -79,6 +79,18 @@ class CalendarIcalExporter
     }
 
     /**
+     * Creates an ics file in the share directory for a given Contao Calendar Event.
+     */
+    public function exportCalendarEvent(CalendarEventsModel $calendarEvent): void
+    {
+        $this->createVCalendar($this->objCalendar);
+
+        $this->addEventToVcalendar($calendarEvent, $this->vCal);
+
+        $this->saveIcalFile(StringUtil::stripRootDir($this->shareDir), $calendarEvent->alias.'.ics');
+    }
+
+    /**
      * Creates a VCalendar for a given Contao Calendar.
      *
      * @property CalendarModel $objCalendar

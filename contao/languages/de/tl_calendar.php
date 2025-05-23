@@ -17,8 +17,11 @@ $GLOBALS['TL_LANG']['tl_calendar']['ical_legend'] = 'iCal Einstellungen';
 $GLOBALS['TL_LANG']['tl_calendar']['export_ical']['0'] = 'iCal Abonnement erstellen';
 $GLOBALS['TL_LANG']['tl_calendar']['export_ical']['1'] = 'Ein iCal Abonnement aus dem Kalender generieren, die über <em>domain.tld/ical/calendar/ical_alias</em> abrufbar ist';
 
-$GLOBALS['TL_LANG']['tl_calendar']['share_ical']['0'] = 'zusätzlich iCal Datei in <em>/share</em>';
+$GLOBALS['TL_LANG']['tl_calendar']['share_ical']['0'] = 'zusätzlich iCal Datei für den Kalender in <em>public/share</em>';
 $GLOBALS['TL_LANG']['tl_calendar']['share_ical']['1'] = 'Zusätzlich zur Route kann der Kalender auch unter <em>domain.tld/share/ical_alias.ics</em> als ics Datei abgerufen werden';
+
+$GLOBALS['TL_LANG']['tl_calendar']['share_ical_events']['0'] = 'zusätzlich iCal Dateien für einzelne Events in <em>public/share</em>';
+$GLOBALS['TL_LANG']['tl_calendar']['share_ical_events']['1'] = 'Zusätzlich zur Route werden einzelne Events des Kalenders auch unter <em>domain.tld/share/alias.ics</em> als ics Datei abgerufen werden';
 
 $GLOBALS['TL_LANG']['tl_calendar']['ical_alias']['0'] = 'Kalender-Alias';
 $GLOBALS['TL_LANG']['tl_calendar']['ical_alias']['1'] = 'Geben Sie einen eindeutigen Namen (ohne Endung) für die ical-Datei an, sie wird veröffentlicht unter <em>domain.tld/share/ical_alias.ics</em>.';
