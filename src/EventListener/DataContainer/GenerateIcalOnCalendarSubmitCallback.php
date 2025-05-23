@@ -41,23 +41,27 @@ class GenerateIcalOnCalendarSubmitCallback
 
         $calendar = CalendarModel::findById($dc->id);
 
-        if ($calendar->export_ical && $calendar->share_ical) {
+        // only proceed if ical export is enabled for this calendar
+        if (!$calendar->export_ical) {
+            return;
+        }
+
+        // create ical file for calendar if enabled
+        if ($calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
+        }
 
-            if ($calendar->share_ical_events) {
-                $calendarEvents = CalendarEventsModel::findByPid($dc->id);
+        // create ical file for each event if enabled
+        if ($calendar->share_ical_events) {
+            $calendarEvents = CalendarEventsModel::findByPid($dc->id);
 
-                if (null !== $calendarEvents) {
-                    foreach ($calendarEvents as $calendarEvent) {
-                        $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
-                        $calenderExporter->exportCalendarEvent($calendarEvent);
-                    }
+            if (null !== $calendarEvents) {
+                foreach ($calendarEvents as $calendarEvent) {
+                    $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
+                    $calenderExporter->exportCalendarEvent($calendarEvent);
                 }
             }
-        } else { 
-            // elseif share_ical_events ?!
-            return;
         }
     }
 }
