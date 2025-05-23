@@ -20,6 +20,7 @@ use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
+use Contao\Message;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -41,8 +42,14 @@ class GenerateIcalOnCalendarSubmitCallback
 
         $calendar = CalendarModel::findById($dc->id);
 
+        if (null !== $calendar && $calendar->protected) {
+            Message::addError('Der Kalender ist geschützt und kann daher nicht exportiert werden.');
+
+            return;
+        }
+
         // only proceed if ical export is enabled and not protected
-        if (!$calendar->export_ical || $calendar->protected) {
+        if (!$calendar->export_ical) {
             return;
         }
 
@@ -50,6 +57,7 @@ class GenerateIcalOnCalendarSubmitCallback
         if ($calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
+            Message::addInfo('Kalender als ics-Datei unter /public/share/ abgelegt.');
         }
 
         // create ical file for each event if enabled
@@ -60,6 +68,7 @@ class GenerateIcalOnCalendarSubmitCallback
                 foreach ($calendarEvents as $calendarEvent) {
                     $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
                     $calenderExporter->exportCalendarEvent($calendarEvent);
+                    Message::addInfo('Events als einzelne ics-Dateien unter /public/share/ abgelegt.');
                 }
             }
         }
