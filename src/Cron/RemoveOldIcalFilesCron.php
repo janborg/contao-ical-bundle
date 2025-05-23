@@ -24,6 +24,11 @@ use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 
+/**
+ * Removes iCal files for calendars and events that do not exist or are not exported or shared anymore on a hourly basis.
+ *
+ */
+
 #[AsCronJob('hourly')]
 class RemoveOldIcalFilesCron
 {
@@ -70,8 +75,9 @@ class RemoveOldIcalFilesCron
                 continue;
             }
             
-            $parentCalendar = CalendarModel::findByPk($calendarEvent->pid);
+            
             // check if file is not linked to any calendarEvent with alias = filename and calendar has export_ical = true and ical_share = true 
+            $parentCalendar = CalendarModel::findByPk($calendarEvent->pid);
             if (
                 null !== $calendarEvent &&
                 null !== $parentCalendar &&
