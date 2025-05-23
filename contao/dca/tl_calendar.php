@@ -64,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'exclude' => true,
         'filter' => true,
         'inputType' => 'checkbox',
-        'eval' => ['tl_class' => 'clr m12'],
+        'eval' => ['tl_class' => 'clr m12', 'submitOnChange' => true],
         'sql' => "char(1) NOT NULL default ''",
     ]],
     ['share_ical_events' => [
@@ -72,7 +72,7 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'exclude' => true,
         'filter' => true,
         'inputType' => 'checkbox',
-        'eval' => ['tl_class' => 'clr m12'],
+        'eval' => ['tl_class' => 'clr m12', 'submitOnChange' => true],
         'sql' => "char(1) NOT NULL default ''",
     ]],
     ['ical_alias' => [
