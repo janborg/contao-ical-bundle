@@ -16,19 +16,18 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\Cron;
 
-use Contao\File;
-use Contao\System;
-use Contao\StringUtil;
-use Contao\CalendarModel;
 use Contao\CalendarEventsModel;
-use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
+use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\File;
+use Contao\StringUtil;
+use Contao\System;
 
 /**
- * Removes iCal files for calendars and events that do not exist or are not exported or shared anymore on a hourly basis.
- *
+ * Removes iCal files for calendars and events that do not exist or are not
+ * exported or shared anymore on a hourly basis.
  */
-
 #[AsCronJob('hourly')]
 class RemoveOldIcalFilesCron
 {
@@ -49,7 +48,7 @@ class RemoveOldIcalFilesCron
 
             $objFile = new File(StringUtil::stripRootDir($shareDir).$file);
 
-            $calendar = CalendarModel::findByIcal_alias($objFile->filename);
+            $calendar = CalendarModel::findBy(['ical_alias=?'], [$objFile->filename]);
 
             $calendarEvent = CalendarEventsModel::findByAlias($objFile->filename);
 
@@ -58,33 +57,31 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            // delete file if neither $calendar nor calendarEvent exists with alias = filename 
+            // delete file if neither $calendar nor calendarEvent exists with alias = filename
             if (null === $calendar && null === $calendarEvent) {
                 $objFile->delete();
                 // TODO: use DI
                 System::getContainer()->get('monolog.logger.contao.cron')->info('Verwaiste Ical Datei "'.$objFile->path.'" gelöscht');
                 continue;
-            }    
+            }
 
-            // keep file, if it is linked to any calendar with export_ical = true, ical_share = true and ical_alias = filename
+            // keep file, if it is linked to any calendar with export_ical = true, ical_share
+            // = true and ical_alias = filename @phpstan-ignore-next-line
+            if (null !== $calendar && $calendar->export_ical && $calendar->share_ical) {
+                continue;
+            }
+
+            // keep file, if it is linked to any calendarEvent with alias = filename and
+            // calendar has export_ical = true and ical_share = true
+            $parentCalendar = CalendarModel::findById($calendarEvent->pid);
             if (
-                null !== $calendar &&
-                $calendar->export_ical && 
-                $calendar->share_ical
+                null !== $calendarEvent
+                && null !== $parentCalendar
+                && $parentCalendar->export_ical
+                && $parentCalendar->share_ical_events
+                // TODO: delete calendarEvents from the past (parameter?!)
             ) {
                 continue;
-            }           
-            
-            // keep file, if it is linked to any calendarEvent with alias = filename and calendar has export_ical = true and ical_share = true 
-            $parentCalendar = CalendarModel::findByPk($calendarEvent->pid);
-            if (
-                null !== $calendarEvent &&
-                null !== $parentCalendar &&
-                $parentCalendar->export_ical && 
-                $parentCalendar->share_ical_events
-                // TODO: delete calendarEvents from the past (parameter?!)
-            ) { 
-                continue;                
             }
 
             $objFile->delete();

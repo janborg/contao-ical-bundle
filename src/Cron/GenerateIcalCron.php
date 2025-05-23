@@ -16,18 +16,16 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\Cron;
 
-use Contao\CalendarModel;
 use Contao\CalendarEventsModel;
-use Janborg\ContaoIcal\CalendarIcalExporter;
-use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
+use Contao\CoreBundle\Framework\ContaoFramework;
+use Janborg\ContaoIcal\CalendarIcalExporter;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Generates iCal files for calendars and their events on a hourly basis.
- *
  */
-
 #[AsCronJob('hourly')]
 class GenerateIcalCron
 {
@@ -41,18 +39,18 @@ class GenerateIcalCron
     public function __invoke(): void
     {
         // find all Calendars to be exported
-        $calendars = CalendarModel::findAll(
+        $calendars = CalendarModel::findBy(
             ['export_ical=?'],
-            [true]
+            [true],
         );
-        
+
         if (null === $calendars) {
             return;
         }
 
         foreach ($calendars as $calendar) {
-
-            // Continue if neither Calender, nor Events are set to be share as file in public/share.
+            // Continue if neither Calender, nor Events are set to be share as file in
+            // public/share.
             if (!$calendar->share_ical && !$calendar->share_ical_events) {
                 continue;
             }
@@ -66,6 +64,7 @@ class GenerateIcalCron
             // Export ics for each Event in public/share.
             if ($calendar->share_ical_events) {
                 $events = CalendarEventsModel::findBy('pid', $calendar->id);
+
                 foreach ($events as $event) {
                     $eventExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
                     $eventExporter->exportCalendarEvent($event);
