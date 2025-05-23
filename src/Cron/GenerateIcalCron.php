@@ -49,9 +49,13 @@ class GenerateIcalCron
         }
 
         foreach ($calendars as $calendar) {
-            // Continue if neither Calender, nor Events are set to be share as file in
-            // public/share.
+            // skip calendar, if neither share_ical nor share_ical_events is true.
             if (!$calendar->share_ical && !$calendar->share_ical_events) {
+                continue;
+            }
+
+            // skip calendar, if protected 
+            if ($calendar->protected) {
                 continue;
             }
 

@@ -65,20 +65,24 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            // keep file, if it is linked to any calendar with export_ical = true, ical_share
+            // delete file if calendar is protected
+            if (null !== $calendar && $calendar->protected) {
+                $objFile->delete();
+                // TODO: use DI
+                System::getContainer()->get('monolog.logger.contao.cron')->info('Ical Datei "'.$objFile->path.'" gelöscht, da Calendar geschützt ist');
+                continue;
+            }
+
+            // keep file, if it is linked to any not protected calendar with export_ical = true, ical_share
             // = true and ical_alias = filename @phpstan-ignore-next-line
             if (null !== $calendar && $calendar->export_ical && $calendar->share_ical) {
                 continue;
             }
 
-            // keep file, if it is linked to any calendarEvent with alias = filename and
+            // keep file, if it is linked to any not protected calendarEvent with alias = filename and
             // calendar has export_ical = true and ical_share = true
             $parentCalendar = CalendarModel::findById($calendarEvent->pid);
-            if (
-                null !== $calendarEvent
-                && null !== $parentCalendar
-                && $parentCalendar->export_ical
-                && $parentCalendar->share_ical_events
+            if (null !== $calendarEvent && null !== $parentCalendar && $parentCalendar->export_ical && !$parentCalendar->share_ical_events
                 // TODO: delete calendarEvents from the past (parameter?!)
             ) {
                 continue;

@@ -41,8 +41,8 @@ class GenerateIcalOnCalendarSubmitCallback
 
         $calendar = CalendarModel::findById($dc->id);
 
-        // only proceed if ical export is enabled for this calendar
-        if (!$calendar->export_ical) {
+        // only proceed if ical export is enabled and not protected
+        if (!$calendar->export_ical || $calendar->protected) {
             return;
         }
 
