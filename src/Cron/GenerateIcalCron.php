@@ -54,7 +54,7 @@ class GenerateIcalCron
                 continue;
             }
 
-            // skip calendar, if protected 
+            // skip calendar, if protected
             if ($calendar->protected) {
                 continue;
             }

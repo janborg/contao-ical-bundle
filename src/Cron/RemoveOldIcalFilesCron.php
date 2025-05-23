@@ -65,7 +65,7 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            // delete file if calendar is protected
+            // delete file if calendar is protected @phpstan-ignore-next-line
             if (null !== $calendar && $calendar->protected) {
                 $objFile->delete();
                 // TODO: use DI
@@ -73,16 +73,17 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            // keep file, if it is linked to any not protected calendar with export_ical = true, ical_share
-            // = true and ical_alias = filename @phpstan-ignore-next-line
+            // keep file, if it is linked to any not protected calendar with export_ical =
+            // true, ical_share = true and ical_alias = filename @phpstan-ignore-next-line
             if (null !== $calendar && $calendar->export_ical && $calendar->share_ical) {
                 continue;
             }
 
-            // keep file, if it is linked to any not protected calendarEvent with alias = filename and
-            // calendar has export_ical = true and ical_share = true
+            // keep file, if it is linked to any not protected calendarEvent with alias =
+            // filename and calendar has export_ical = true and ical_share = true
             $parentCalendar = CalendarModel::findById($calendarEvent->pid);
-            if (null !== $calendarEvent && null !== $parentCalendar && $parentCalendar->export_ical && !$parentCalendar->share_ical_events
+            if (
+                null !== $calendarEvent && null !== $parentCalendar && $parentCalendar->export_ical && !$parentCalendar->share_ical_events
                 // TODO: delete calendarEvents from the past (parameter?!)
             ) {
                 continue;
