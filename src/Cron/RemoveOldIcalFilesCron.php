@@ -53,7 +53,7 @@ class RemoveOldIcalFilesCron
 
             $calendarEvent = CalendarEventsModel::findByAlias($objFile->filename);
 
-            // check if file_extension is 'ics'
+            // keep files with extensions, other than ics
             if ('ics' !== $objFile->extension) {
                 continue;
             }
@@ -66,23 +66,23 @@ class RemoveOldIcalFilesCron
                 continue;
             }    
 
-            // ckeck if file is not linked to any calendar with export_ical = true, ical_share = true and ical_alias = filename
+            // keep file, if it is linked to any calendar with export_ical = true, ical_share = true and ical_alias = filename
             if (
                 null !== $calendar &&
                 $calendar->export_ical && 
                 $calendar->share_ical
             ) {
                 continue;
-            }
+            }           
             
-            
-            // check if file is not linked to any calendarEvent with alias = filename and calendar has export_ical = true and ical_share = true 
+            // keep file, if it is linked to any calendarEvent with alias = filename and calendar has export_ical = true and ical_share = true 
             $parentCalendar = CalendarModel::findByPk($calendarEvent->pid);
             if (
                 null !== $calendarEvent &&
                 null !== $parentCalendar &&
                 $parentCalendar->export_ical && 
                 $parentCalendar->share_ical_events
+                // TODO: delete calendarEvents from the past (parameter?!)
             ) { 
                 continue;                
             }
