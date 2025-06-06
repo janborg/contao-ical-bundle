@@ -20,8 +20,8 @@ use Janborg\ContaoIcal\Response\CalendarResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class IcalCalendarController
 {
