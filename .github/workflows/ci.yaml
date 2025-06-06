@@ -1,12 +1,11 @@
 name: CI
 
 on:
+  pull_request: ~
   push:
     branches:
-      - '*'
-  schedule:
-    - cron: "0 18 15 * *"
-
+      - '*.x'
+  
 jobs:
   ecs:
     name: ecs
