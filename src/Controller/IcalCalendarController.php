@@ -19,7 +19,7 @@ use Janborg\ContaoIcal\CalendarIcalExporter;
 use Janborg\ContaoIcal\Response\CalendarResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -33,7 +33,7 @@ class IcalCalendarController
     ) {
     }
 
-    #[Route('/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]
+    #[Route(path: '/ical/event/{alias}', name: 'janborg_calendar_ical_event', defaults: ['_scope' => 'frontend', '_token_check' => true])]
     public function ical_event(Request $request, string $alias): CalendarResponse|Response
     {
         // Initialize the Contao framework
@@ -72,7 +72,7 @@ class IcalCalendarController
         return new CalendarResponse($iCalContent, StringUtil::standardize($event->title));
     }
 
-    #[Route('/ical/calendar/{ical_alias}', name: 'janborg_calendar_ical_calendar', defaults: ['_scope' => 'frontend', '_token_check' => true])]
+    #[Route(path: '/ical/calendar/{ical_alias}', name: 'janborg_calendar_ical_calendar', defaults: ['_scope' => 'frontend', '_token_check' => true])]
     public function ical_calendar(Request $request, string $ical_alias): CalendarResponse|Response
     {
         $calendar = CalendarModel::findOneBy('ical_alias', $ical_alias);
