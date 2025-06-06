@@ -17,11 +17,11 @@ use Contao\StringUtil;
 use Contao\System;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Janborg\ContaoIcal\Response\CalendarResponse;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class IcalCalendarController
 {
