@@ -25,6 +25,7 @@ class JanborgContaoIcalBundleTest extends TestCase
     {
         $bundle = new JanborgContaoIcalBundle();
 
+        // @phpstan-ignore method.alreadyNarrowedType
         $this->assertInstanceOf(JanborgContaoIcalBundle::class, $bundle);
     }
 }
