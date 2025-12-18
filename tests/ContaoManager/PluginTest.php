@@ -33,6 +33,7 @@ class PluginTest extends TestCase
         /** @var BundleConfig $config */
         $config = (new Plugin())->getBundles($parser)[0];
 
+        // @phpstan-ignore method.alreadyNarrowedType
         $this->assertInstanceOf(BundleConfig::class, $config);
         $this->assertSame(JanborgContaoIcalBundle::class, $config->getName());
         $this->assertSame([ContaoCalendarBundle::class, ContaoCoreBundle::class], $config->getLoadAfter());
