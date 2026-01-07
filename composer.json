@@ -20,7 +20,7 @@
         "php": "^8.3",
         "contao/core-bundle": "^5.3",
         "contao/calendar-bundle": "^5.3",
-        "doctrine/dbal": "^3.6",
+        "doctrine/dbal": "^3.6 || ^4.4",
         "kigkonsult/icalcreator": "^2.4",
         "symfony/config": "^6.4 || ^7.0",
         "symfony/dependency-injection": "^6.4 || ^7.0",
