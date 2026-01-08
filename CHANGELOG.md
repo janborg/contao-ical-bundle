@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/janborg/contao-ical-bundle/compare/v0.5.2...v0.5.3) (2026-01-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update requirement kigkonsult/icalcreator from ^2.4 to ^2.40 ([f893a95](https://github.com/janborg/contao-ical-bundle/commit/f893a9514bf9f359041a6c44fca0af54811adbb7))
+
 ## [0.5.2](https://github.com/janborg/contao-ical-bundle/compare/v0.5.1...v0.5.2) (2026-01-07)
 
 
