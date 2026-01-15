@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.4](https://github.com/janborg/contao-ical-bundle/compare/v0.5.3...v0.5.4) (2026-01-15)
+
+
+### Bug Fixes
+
+* ContainerAwareInterface was removed in Symfony 6 ([f05a195](https://github.com/janborg/contao-ical-bundle/commit/f05a195005d96900c5b64791eea7da4e9f232fbc))
+
 ## [0.5.3](https://github.com/janborg/contao-ical-bundle/compare/v0.5.2...v0.5.3) (2026-01-08)
 
 
