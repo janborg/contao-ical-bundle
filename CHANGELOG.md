@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.5](https://github.com/janborg/contao-ical-bundle/compare/v0.5.4...v0.5.5) (2026-09-03)
+
+
+### Miscellaneous Chores
+
+* (deps-dev): update contao/easy-coding-standard requirement from ^6.0 to ^7.1 ([#54](https://github.com/janborg/contao-ical-bundle/issues/54)) ([4ae432a](https://github.com/janborg/contao-ical-bundle/commit/4ae432a2909e74e2e2d9a02fe401e26be527351f))
+
 ## [0.5.4](https://github.com/janborg/contao-ical-bundle/compare/v0.5.3...v0.5.4) (2026-01-15)
 
 
