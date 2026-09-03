@@ -53,7 +53,6 @@ class GenerateIcalOnCalendarEventSubmitCallback
             null !== $calendar
             && $calendar->export_ical
             && $calendar->share_ical
-            && !$calendar->protected
         ) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
@@ -64,7 +63,6 @@ class GenerateIcalOnCalendarEventSubmitCallback
             null !== $calendar
             && $calendar->export_ical
             && $calendar->share_ical_events
-            && !$calendar->protected
         ) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendarEvent($calendarEvent);
