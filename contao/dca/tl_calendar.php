@@ -52,7 +52,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['subpalettes'] = array_merge(
  */
 $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
     ['export_ical' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['export_ical'],
         'exclude' => true,
         'filter' => true,
         'inputType' => 'checkbox',
@@ -60,7 +59,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => "char(1) NOT NULL default ''",
     ]],
     ['share_ical' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['share_ical'],
         'exclude' => true,
         'filter' => true,
         'inputType' => 'checkbox',
@@ -68,7 +66,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => "char(1) NOT NULL default ''",
     ]],
     ['share_ical_events' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['share_ical_events'],
         'exclude' => true,
         'filter' => true,
         'inputType' => 'checkbox',
@@ -76,7 +73,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => "char(1) NOT NULL default ''",
     ]],
     ['ical_alias' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['ical_alias'],
         'exclude' => true,
         'search' => true,
         'inputType' => 'text',
@@ -84,7 +80,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => "varbinary(128) NOT NULL default ''",
     ]],
     ['ical_prefix' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['ical_prefix'],
         'exclude' => true,
         'search' => true,
         'inputType' => 'text',
@@ -92,7 +87,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => "varchar(128) NOT NULL default ''",
     ]],
     ['ical_description' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['ical_description'],
         'exclude' => true,
         'search' => true,
         'inputType' => 'textarea',
@@ -100,7 +94,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => 'text NULL',
     ]],
     ['ical_export_start' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['ical_export_start'],
         'exclude' => true,
         'filter' => true,
         'flag' => 8,
@@ -109,7 +102,6 @@ $GLOBALS['TL_DCA']['tl_calendar']['fields'] = array_merge(
         'sql' => 'int(10) NULL',
     ]],
     ['ical_export_end' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_calendar']['ical_export_end'],
         'exclude' => true,
         'filter' => true,
         'flag' => 8,

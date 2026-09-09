@@ -1,0 +1,26 @@
+tl_calendar:
+  ical_legend: "iCal Settings"
+  export_ical:
+    0: "Create iCal subscription"
+    1: "Generate an iCal subscription from the calendar, accessible via <em>domain.tld/ical/calendar/ical_alias</em>"
+  share_ical:
+    0: "additional iCal file for the calendar in <em>public/share</em>"
+    1: "In addition to the route, the calendar can also be accessed as an ics file at <em>domain.tld/share/ical_alias.ics</em>"
+  share_ical_events:
+    0: "additional iCal files for individual events in <em>public/share</em>"
+    1: "In addition to the route, individual events from the calendar can also be accessed as an ics file at <em>domain.tld/share/alias.ics</em>"
+  ical_alias:
+    0: "Calendar alias"
+    1: "Provide a unique name (without extension) for the ical file; it will be published under <em>domain.tld/share/ical_alias.ics</em>."
+  ical_prefix:
+    0: "Title prefix"
+    1: "Please enter a prefix that will be output before all event titles in the iCal subscription file."
+  ical_description:
+    0: "iCal description"
+    1: "Please enter a short description of the iCal subscription"
+  ical_export_start:
+    0: "Start date"
+    1: "Please enter the start date from which Contao should extract appointments from the selected calendars. If no date is provided, the current date will be used as the start date."
+  ical_export_end:
+    0: "End date"
+    1: "Please enter the end date up to which Contao should extract appointments from the selected calendars. If no date is provided, the date in one year will be used as the end date."
