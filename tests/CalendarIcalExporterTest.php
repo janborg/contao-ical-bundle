@@ -32,9 +32,48 @@ class CalendarIcalExporterTest extends TestCase
 {
     protected function setUp(): void
     {
+        $this->setContainer();
+    }
+
+    public function testInitializesExportPropertiesFromCalendarConfiguration(): void
+    {
+        $start = strtotime('2026-10-01 00:00:00 UTC');
+        $end = strtotime('2026-12-31 23:59:59 UTC');
+
+        $exporter = $this->createExporter([
+            'ical_alias' => 'team-events',
+            'ical_export_start' => $start,
+            'ical_export_end' => $end,
+        ]);
+
+        $this->assertSame('/tmp/share/', $exporter->shareDir);
+        $this->assertSame('team-events.ics', $exporter->exportFileName);
+        $this->assertSame($start, $exporter->startDate);
+        $this->assertSame($end, $exporter->endDate);
+    }
+
+    public function testInitializesDefaultExportPropertiesWhenCalendarConfigurationIsMissing(): void
+    {
+        $this->setContainer('/var/www/public', 14);
+        $before = time();
+
+        $exporter = $this->createExporter(['id' => 42]);
+
+        $after = time();
+
+        $this->assertSame('/var/www/public/share/', $exporter->shareDir);
+        $this->assertSame('calendar42.ics', $exporter->exportFileName);
+        $this->assertGreaterThanOrEqual($before, $exporter->startDate);
+        $this->assertLessThanOrEqual($after, $exporter->startDate);
+        $this->assertGreaterThanOrEqual($before + 14 * 24 * 3600, $exporter->endDate);
+        $this->assertLessThanOrEqual($after + 14 * 24 * 3600, $exporter->endDate);
+    }
+
+    private function setContainer(string $webDir = '/tmp', int $defaultEndDateDays = 365): void
+    {
         $container = new Container();
-        $container->setParameter('contao.web_dir', '/tmp');
-        $container->setParameter('janborg_contao_ical.defaultEndDateDays', 365);
+        $container->setParameter('contao.web_dir', $webDir);
+        $container->setParameter('janborg_contao_ical.defaultEndDateDays', $defaultEndDateDays);
         $container->setParameter('janborg_contao_ical.defaultEventDuration', 60);
 
         System::setContainer($container);
