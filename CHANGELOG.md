@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.5](https://github.com/janborg/contao-ical-bundle/compare/v0.5.4...v0.5.5) (2026-09-09)
+
+
+### Code Refactoring
+
+* move configuration and tool files to tools/ directory ([#56](https://github.com/janborg/contao-ical-bundle/issues/56)) ([348f1fb](https://github.com/janborg/contao-ical-bundle/commit/348f1fbc3f3126360467fdcb25866c76c30d6474))
+* move translations to YAML and remove outdated language files ([#57](https://github.com/janborg/contao-ical-bundle/issues/57)) ([5131ed0](https://github.com/janborg/contao-ical-bundle/commit/5131ed01aa61a6a160f4a562b3fa4a2120e42e5f))
+
+
+### Miscellaneous Chores
+
+* (deps-dev): update contao/easy-coding-standard requirement from ^6.0 to ^7.1 ([#54](https://github.com/janborg/contao-ical-bundle/issues/54)) ([4ae432a](https://github.com/janborg/contao-ical-bundle/commit/4ae432a2909e74e2e2d9a02fe401e26be527351f))
+* switch release-please to manifest mode to show refactor commits ([#58](https://github.com/janborg/contao-ical-bundle/issues/58)) ([36f01d7](https://github.com/janborg/contao-ical-bundle/commit/36f01d74c1c4e9cfa9e7670288f5972a2f15da22))
+
 ## [0.5.4](https://github.com/janborg/contao-ical-bundle/compare/v0.5.3...v0.5.4) (2026-01-15)
 
 
