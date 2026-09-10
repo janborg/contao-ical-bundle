@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.6](https://github.com/janborg/contao-ical-bundle/compare/v0.5.5...v0.5.6) (2026-09-10)
+
+
+### Bug Fixes
+
+* quote calendar response download filename ([b1ef072](https://github.com/janborg/contao-ical-bundle/commit/b1ef072249e200298ec3d76cb42349cbd8c391e1))
+* Remove unused recurrence unit handling and add exporter coverage ([#62](https://github.com/janborg/contao-ical-bundle/issues/62)) ([5bba07d](https://github.com/janborg/contao-ical-bundle/commit/5bba07d5879a52a855e8e7408b14b97416585b8a))
+
 ## [0.5.5](https://github.com/janborg/contao-ical-bundle/compare/v0.5.4...v0.5.5) (2026-09-09)
 
 
