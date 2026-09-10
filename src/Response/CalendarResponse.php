@@ -71,7 +71,7 @@ class CalendarResponse extends Response
         $headers['Content-Type'] = \sprintf('%s; charset=utf-8', $mimeType);
 
         $filename = $this->filename.'.ics';
-        $headers['Content-Disposition'] = \sprintf('attachment; filename="%s', $filename);
+        $headers['Content-Disposition'] = \sprintf('attachment; filename="%s"', $filename);
 
         return $headers;
     }
