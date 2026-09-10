@@ -191,14 +191,17 @@ class CalendarIcalExporterTest extends TestCase
     public function testDispatchesEventThatCanModifyVevent(): void
     {
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $eventDispatcher->expects($this->once())
+        $eventDispatcher
+            ->expects($this->once())
             ->method('dispatch')
-            ->willReturnCallback(static function (object $event): object {
-                self::assertInstanceOf(EditVeventEvent::class, $event);
-                $event->getVevent()->setSummary('Modified by listener');
+            ->willReturnCallback(
+                static function (object $event): object {
+                    self::assertInstanceOf(EditVeventEvent::class, $event);
+                    $event->getVevent()->setSummary('Modified by listener');
 
-                return $event;
-            })
+                    return $event;
+                },
+            )
         ;
 
         $exporter = $this->createExporter([], $eventDispatcher);
@@ -237,8 +240,16 @@ class CalendarIcalExporterTest extends TestCase
             ->onlyMethods(['__get', '__isset'])
             ->getMock()
         ;
-        $calendar->method('__get')->willReturnCallback(static fn (string $property): mixed => $data[$property] ?? null);
-        $calendar->method('__isset')->willReturnCallback(static fn (string $property): bool => isset($data[$property]));
+
+        $calendar
+            ->method('__get')
+            ->willReturnCallback(static fn (string $property): mixed => $data[$property] ?? null)
+        ;
+
+        $calendar
+            ->method('__isset')
+            ->willReturnCallback(static fn (string $property): bool => isset($data[$property]))
+        ;
 
         return $calendar;
     }
@@ -254,8 +265,16 @@ class CalendarIcalExporterTest extends TestCase
             ->onlyMethods(['__get', '__isset'])
             ->getMock()
         ;
-        $event->method('__get')->willReturnCallback(static fn (string $property): mixed => $data[$property] ?? null);
-        $event->method('__isset')->willReturnCallback(static fn (string $property): bool => isset($data[$property]));
+
+        $event
+            ->method('__get')
+            ->willReturnCallback(static fn (string $property): mixed => $data[$property] ?? null)
+        ;
+
+        $event
+            ->method('__isset')
+            ->willReturnCallback(static fn (string $property): bool => isset($data[$property]))
+        ;
 
         return $event;
     }
