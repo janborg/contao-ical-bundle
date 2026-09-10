@@ -185,11 +185,6 @@ class CalendarIcalExporter
         if ($objEvent->recurring) {
             $arrRepeat = StringUtil::deserialize($objEvent->repeatEach);
             $arg = $arrRepeat['value'];
-            $unit = $arrRepeat['unit'];
-
-            if (1 === $arg) {
-                $unit = substr((string) $unit, 0, -1);
-            }
 
             $freq = 'YEARLY';
 
