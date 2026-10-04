@@ -40,8 +40,6 @@ class JanborgContaoIcalExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
 
         $loader->load('services.yaml');
-        $loader->load('listener.yaml');
-        $loader->load('migrations.yaml');
 
         $rootKey = $this->getAlias();
 

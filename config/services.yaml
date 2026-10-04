@@ -1,35 +1,11 @@
 services:
     _defaults:
+        autowire: true
         autoconfigure: true
 
-    _instanceof:
-        Contao\CoreBundle\Framework\FrameworkAwareInterface:
-            calls:
-                - ['setFramework', ['@contao.framework']]
+    Janborg\ContaoIcal\:
+        resource: ../src
+        exclude: ../src/{CalendarIcalExporter.php,ContaoManager,DependencyInjection,Event,Response,JanborgContaoIcalBundle.php}
 
-        Symfony\Bundle\FrameworkBundle\Controller\AbstractController:
-            calls:
-                - ['setContainer', ['@Psr\Container\ContainerInterface']]
-
-    Janborg\ContaoIcal\Cron\GenerateIcalCron:
-        arguments:
-            - '@contao.framework'
-            - '@event_dispatcher'
-
-    Janborg\ContaoIcal\Cron\RemoveOldIcalFilesCron:
-        arguments:
-            - '@contao.framework'
-            - '@event_dispatcher'
-
-    Janborg\ContaoIcal\Controller\IcalCalendarController: 
-        arguments:
-            - '@contao.framework'
-            - '@security.helper'
-            - '@contao.security.token_checker'
-            - '@event_dispatcher'
+    Janborg\ContaoIcal\Controller\IcalCalendarController:
         tags: ['controller.service_arguments']
-                
-    Janborg\ContaoIcal\CalendarIcalExporter:
-        arguments: 
-            - '@contao.calendar_model'
-            - '@event_dispatcher'
