@@ -33,11 +33,12 @@ class GenerateIcalCron
         private readonly ContaoFramework $framework,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->framework->initialize();
     }
 
     public function __invoke(): void
     {
+        $this->framework->initialize();
+
         // find all Calendars to be exported
         $calendars = CalendarModel::findBy(
             ['export_ical=?'],
