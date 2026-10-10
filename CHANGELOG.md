@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.7](https://github.com/janborg/contao-ical-bundle/compare/v0.5.6...v0.5.7) (2026-10-10)
+
+
+### Code Refactoring
+
+* Consolidate service config and clean up bundle structure ([264bc46](https://github.com/janborg/contao-ical-bundle/commit/264bc46ba0f5257851e9a534547fb7c731217b28))
+
 ## [0.5.6](https://github.com/janborg/contao-ical-bundle/compare/v0.5.5...v0.5.6) (2026-09-10)
 
 
