@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/janborg/contao-ical-bundle/compare/v0.5.6...v1.0.0) (2026-10-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* the constructors of IcalCalendarController, GenerateIcalCron, RemoveOldIcalFilesCron, GenerateIcalOnCalendarSubmitCallback, GenerateIcalOnCalendarEventSubmitCallback and StartdateEnddateMigration changed. They now take a CalendarIcalExporterFactory instead of the event dispatcher, the DCA callbacks also take ContaoFramework, and the migration no longer takes it. Code that instantiates or extends these classes directly must be updated; autowired services are not affected.
+
+### Bug Fixes
+
+* correct ical file cleanup and guard against missing records ([1fb0acd](https://github.com/janborg/contao-ical-bundle/commit/1fb0acd5a13a3f044b930db8fda4415d3f2249ba))
+
+
+### Code Refactoring
+
+* Consolidate service config and clean up bundle structure ([264bc46](https://github.com/janborg/contao-ical-bundle/commit/264bc46ba0f5257851e9a534547fb7c731217b28))
+* use framework adapters and an exporter factory ([bd254e1](https://github.com/janborg/contao-ical-bundle/commit/bd254e120182bd488478d1a7588ba0e28f9af2f7))
+
 ## [0.5.6](https://github.com/janborg/contao-ical-bundle/compare/v0.5.5...v0.5.6) (2026-09-10)
 
 
