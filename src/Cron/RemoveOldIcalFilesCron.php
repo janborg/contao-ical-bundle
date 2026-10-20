@@ -20,9 +20,8 @@ use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\File;
-use Contao\StringUtil;
-use Contao\System;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Removes iCal files for calendars and events that do not exist or are not
@@ -31,20 +30,28 @@ use Contao\System;
 #[AsCronJob('hourly')]
 class RemoveOldIcalFilesCron
 {
-    public function __construct(private readonly ContaoFramework $framework)
-    {
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        #[Autowire('%contao.web_dir%')]
+        private readonly string $webDir,
+        #[Autowire(service: 'monolog.logger.contao.cron')]
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function __invoke(): void
     {
         $this->framework->initialize();
 
-        $shareDir = System::getContainer()->getParameter('contao.web_dir').'/share/'; // TODO: use DI
+        $shareDir = $this->webDir.'/share/';
 
         // nothing to clean up, if no ics file has been exported yet
         if (!is_dir($shareDir)) {
             return;
         }
+
+        $calendarAdapter = $this->framework->getAdapter(CalendarModel::class);
+        $calendarEventsAdapter = $this->framework->getAdapter(CalendarEventsModel::class);
 
         // Delete old files
         foreach (scandir($shareDir) as $file) {
@@ -52,30 +59,26 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            $objFile = new File(StringUtil::stripRootDir($shareDir).$file);
-
             // keep files with extensions, other than ics
-            if ('ics' !== $objFile->extension) {
+            if ('ics' !== strtolower(pathinfo($file, PATHINFO_EXTENSION))) {
                 continue;
             }
 
-            $calendar = CalendarModel::findOneBy('ical_alias', $objFile->filename);
+            $alias = pathinfo($file, PATHINFO_FILENAME);
 
-            $calendarEvent = CalendarEventsModel::findByAlias($objFile->filename);
+            $calendar = $calendarAdapter->findOneBy('ical_alias', $alias);
+
+            $calendarEvent = $calendarEventsAdapter->findByAlias($alias);
 
             // delete file if neither $calendar nor calendarEvent exists with alias = filename
             if (null === $calendar && null === $calendarEvent) {
-                $objFile->delete();
-                // TODO: use DI
-                System::getContainer()->get('monolog.logger.contao.cron')->info('Verwaiste Ical Datei "'.$objFile->path.'" gelöscht');
+                $this->deleteFile($shareDir, $file, 'Verwaiste Ical Datei "%s" gelöscht');
                 continue;
             }
 
             // delete file if calendar is protected
             if (null !== $calendar && $calendar->protected) {
-                $objFile->delete();
-                // TODO: use DI
-                System::getContainer()->get('monolog.logger.contao.cron')->info('Ical Datei "'.$objFile->path.'" gelöscht, da Calendar geschützt ist');
+                $this->deleteFile($shareDir, $file, 'Ical Datei "%s" gelöscht, da Calendar geschützt ist');
                 continue;
             }
 
@@ -87,7 +90,7 @@ class RemoveOldIcalFilesCron
 
             // keep file, if it is linked to any calendarEvent with alias = filename and its
             // calendar is not protected and has export_ical = true and share_ical_events = true
-            $parentCalendar = null !== $calendarEvent ? CalendarModel::findById($calendarEvent->pid) : null;
+            $parentCalendar = null !== $calendarEvent ? $calendarAdapter->findById($calendarEvent->pid) : null;
 
             if (
                 null !== $parentCalendar
@@ -99,9 +102,15 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            $objFile->delete();
-            // TODO: use DI
-            System::getContainer()->get('monolog.logger.contao.cron')->info('Verwaiste Ical Datei "'.$objFile->path.'" gelöscht');
+            $this->deleteFile($shareDir, $file, 'Verwaiste Ical Datei "%s" gelöscht');
         }
+    }
+
+    private function deleteFile(string $shareDir, string $file, string $message): void
+    {
+        unlink($shareDir.$file);
+
+        // log the path relative to the project dir, e.g. public/share/calendar.ics
+        $this->logger->info(\sprintf($message, basename($this->webDir).'/share/'.$file));
     }
 }

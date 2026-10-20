@@ -20,8 +20,7 @@ use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Janborg\ContaoIcal\CalendarIcalExporter;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Janborg\ContaoIcal\CalendarIcalExporterFactory;
 
 /**
  * Generates iCal files for calendars and their events on a hourly basis.
@@ -31,7 +30,7 @@ class GenerateIcalCron
 {
     public function __construct(
         private readonly ContaoFramework $framework,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly CalendarIcalExporterFactory $exporterFactory,
     ) {
     }
 
@@ -40,7 +39,7 @@ class GenerateIcalCron
         $this->framework->initialize();
 
         // find all Calendars to be exported
-        $calendars = CalendarModel::findBy(
+        $calendars = $this->framework->getAdapter(CalendarModel::class)->findBy(
             ['export_ical=?'],
             [true],
         );
@@ -62,20 +61,20 @@ class GenerateIcalCron
 
             // Export ics for the Calendar in public/share.
             if ($calendar->share_ical) {
-                $calendarExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
-                $calendarExporter->exportCalendar();
+                $this->exporterFactory->create($calendar)->exportCalendar();
             }
 
             // Export ics for each Event in public/share.
             if ($calendar->share_ical_events) {
-                $events = CalendarEventsModel::findBy('pid', $calendar->id);
+                $events = $this->framework->getAdapter(CalendarEventsModel::class)->findBy('pid', $calendar->id);
 
                 if (null === $events) {
                     continue;
                 }
 
+                $eventExporter = $this->exporterFactory->create($calendar);
+
                 foreach ($events as $event) {
-                    $eventExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
                     $eventExporter->exportCalendarEvent($event);
                 }
             }

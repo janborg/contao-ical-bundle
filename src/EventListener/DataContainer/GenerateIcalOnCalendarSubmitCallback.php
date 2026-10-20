@@ -19,17 +19,18 @@ namespace Janborg\ContaoIcal\EventListener\DataContainer;
 use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\DataContainer;
 use Contao\Message;
-use Janborg\ContaoIcal\CalendarIcalExporter;
+use Janborg\ContaoIcal\CalendarIcalExporterFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class GenerateIcalOnCalendarSubmitCallback
 {
     public function __construct(
+        private readonly ContaoFramework $framework,
         private readonly RequestStack $requestStack,
-        private EventDispatcherInterface $eventDispatcher,
+        private readonly CalendarIcalExporterFactory $exporterFactory,
     ) {
     }
 
@@ -40,14 +41,16 @@ class GenerateIcalOnCalendarSubmitCallback
             return;
         }
 
-        $calendar = CalendarModel::findById($dc->id);
+        $calendar = $this->framework->getAdapter(CalendarModel::class)->findById($dc->id);
 
         if (null === $calendar) {
             return;
         }
 
+        $message = $this->framework->getAdapter(Message::class);
+
         if ($calendar->protected) {
-            Message::addError('Der Kalender ist geschützt und kann daher nicht exportiert werden.');
+            $message->addError('Der Kalender ist geschützt und kann daher nicht exportiert werden.');
 
             return;
         }
@@ -59,20 +62,20 @@ class GenerateIcalOnCalendarSubmitCallback
 
         // create ical file for calendar if enabled
         if ($calendar->share_ical) {
-            $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
-            $calenderExporter->exportCalendar();
-            Message::addInfo('Kalender als ics-Datei unter /public/share/ abgelegt.');
+            $this->exporterFactory->create($calendar)->exportCalendar();
+            $message->addInfo('Kalender als ics-Datei unter /public/share/ abgelegt.');
         }
 
         // create ical file for each event if enabled
         if ($calendar->share_ical_events) {
-            $calendarEvents = CalendarEventsModel::findByPid($dc->id);
+            $calendarEvents = $this->framework->getAdapter(CalendarEventsModel::class)->findByPid($dc->id);
 
             if (null !== $calendarEvents) {
+                $calendarExporter = $this->exporterFactory->create($calendar);
+
                 foreach ($calendarEvents as $calendarEvent) {
-                    $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
-                    $calenderExporter->exportCalendarEvent($calendarEvent);
-                    Message::addInfo('Events als einzelne ics-Dateien unter /public/share/ abgelegt.');
+                    $calendarExporter->exportCalendarEvent($calendarEvent);
+                    $message->addInfo('Events als einzelne ics-Dateien unter /public/share/ abgelegt.');
                 }
             }
         }
