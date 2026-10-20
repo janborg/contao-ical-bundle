@@ -36,34 +36,35 @@ class GenerateIcalOnCalendarEventSubmitCallback
     #[AsCallback(table: 'tl_calendar_events', target: 'config.onsubmit')]
     public function __invoke(DataContainer|null $dc = null): void
     {
-        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
+        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()?->query->get('act')) {
             return;
         }
 
         $calendarEvent = CalendarEventsModel::findById($dc->id);
+
+        if (null === $calendarEvent) {
+            return;
+        }
+
         $calendar = CalendarModel::findById($calendarEvent->pid);
 
-        if (null !== $calendar && $calendar->protected) {
+        if (null === $calendar) {
+            return;
+        }
+
+        if ($calendar->protected) {
             Message::addError('Der Kalender ist geschützt und kann daher nicht exportiert werden.');
 
             return;
         }
 
-        if (
-            null !== $calendar
-            && $calendar->export_ical
-            && $calendar->share_ical
-        ) {
+        if ($calendar->export_ical && $calendar->share_ical) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendar();
             Message::addInfo('Kalender als ics-Datei unter /public/share/ abgelegt.');
         }
 
-        if (
-            null !== $calendar
-            && $calendar->export_ical
-            && $calendar->share_ical_events
-        ) {
+        if ($calendar->export_ical && $calendar->share_ical_events) {
             $calenderExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
             $calenderExporter->exportCalendarEvent($calendarEvent);
             Message::addInfo('Event als ics-Datei unter /public/share/ abgelegt.');

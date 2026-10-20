@@ -70,6 +70,10 @@ class GenerateIcalCron
             if ($calendar->share_ical_events) {
                 $events = CalendarEventsModel::findBy('pid', $calendar->id);
 
+                if (null === $events) {
+                    continue;
+                }
+
                 foreach ($events as $event) {
                     $eventExporter = new CalendarIcalExporter($calendar, $this->eventDispatcher);
                     $eventExporter->exportCalendarEvent($event);

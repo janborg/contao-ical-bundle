@@ -36,13 +36,17 @@ class GenerateIcalOnCalendarSubmitCallback
     #[AsCallback(table: 'tl_calendar', target: 'config.onsubmit')]
     public function __invoke(DataContainer|null $dc = null): void
     {
-        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
+        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()?->query->get('act')) {
             return;
         }
 
         $calendar = CalendarModel::findById($dc->id);
 
-        if (null !== $calendar && $calendar->protected) {
+        if (null === $calendar) {
+            return;
+        }
+
+        if ($calendar->protected) {
             Message::addError('Der Kalender ist geschützt und kann daher nicht exportiert werden.');
 
             return;

@@ -37,7 +37,7 @@ class StartdateEnddateMigration extends AbstractMigration
 
         $columns = $schemaManager->listTableColumns('tl_calendar');
 
-        if (!isset($columns['ical_export_start']) && !isset($columns['ical_export_end'])) {
+        if (!isset($columns['ical_export_start'], $columns['ical_export_end'])) {
             return false;
         }
 
@@ -65,7 +65,7 @@ class StartdateEnddateMigration extends AbstractMigration
 
         $objCalendars = CalendarModel::findAll();
 
-        foreach ($objCalendars as $objCalendar) {
+        foreach ($objCalendars ?? [] as $objCalendar) {
             '' === $objCalendar->ical_export_start ? $int_start = null : $int_start = (int) $objCalendar->ical_export_start;
 
             '' === $objCalendar->ical_export_end ? $int_end = null : $int_end = (int) $objCalendar->ical_export_end;
