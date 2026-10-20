@@ -20,22 +20,47 @@ use Contao\CalendarBundle\ContaoCalendarBundle;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
+use Contao\TestCase\ContaoTestCase;
 use Janborg\ContaoIcal\ContaoManager\Plugin;
 use Janborg\ContaoIcal\JanborgContaoIcalBundle;
-use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Loader\LoaderResolverInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\RouteCollection;
 
-class PluginTest extends TestCase
+class PluginTest extends ContaoTestCase
 {
     public function testReturnsTheBundles(): void
     {
-        $parser = $this->createMock(ParserInterface::class);
+        $bundles = (new Plugin())->getBundles($this->createStub(ParserInterface::class));
 
-        /** @var BundleConfig $config */
-        $config = (new Plugin())->getBundles($parser)[0];
+        $this->assertCount(1, $bundles);
+        $this->assertInstanceOf(BundleConfig::class, $bundles[0]);
+        $this->assertSame(JanborgContaoIcalBundle::class, $bundles[0]->getName());
+        $this->assertSame([ContaoCalendarBundle::class, ContaoCoreBundle::class], $bundles[0]->getLoadAfter());
+    }
 
-        // @phpstan-ignore method.alreadyNarrowedType
-        $this->assertInstanceOf(BundleConfig::class, $config);
-        $this->assertSame(JanborgContaoIcalBundle::class, $config->getName());
-        $this->assertSame([ContaoCalendarBundle::class, ContaoCoreBundle::class], $config->getLoadAfter());
+    public function testLoadsTheBundleRoutes(): void
+    {
+        $routesFile = realpath(__DIR__.'/../../config/routes.yaml');
+        $collection = new RouteCollection();
+
+        $loader = $this->createMock(LoaderInterface::class);
+        $loader
+            ->expects($this->once())
+            ->method('load')
+            ->with($this->callback(static fn (string $file): bool => realpath($file) === $routesFile))
+            ->willReturn($collection)
+        ;
+
+        $resolver = $this->createMock(LoaderResolverInterface::class);
+        $resolver
+            ->expects($this->once())
+            ->method('resolve')
+            ->with($this->callback(static fn (string $file): bool => realpath($file) === $routesFile))
+            ->willReturn($loader)
+        ;
+
+        $this->assertSame($collection, (new Plugin())->getRouteCollection($resolver, $this->createStub(KernelInterface::class)));
     }
 }

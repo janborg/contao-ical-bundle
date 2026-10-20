@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" backupGlobals="false" colors="true">
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="vendor/autoload.php"
+    cacheDirectory=".phpunit.cache"
+    defaultTestSuite="unit"
+    backupGlobals="false"
+    colors="true"
+    failOnRisky="true"
+    failOnWarning="true"
+>
   <php>
     <ini name="error_reporting" value="-1"/>
+    <env name="APP_ENV" value="test"/>
   </php>
   <testsuites>
-    <testsuite name="Janborg Ical Bundle">
+    <testsuite name="unit">
       <directory>./tests</directory>
     </testsuite>
   </testsuites>
+  <extensions>
+    <bootstrap class="Contao\TestCase\ClearCachePhpunitExtension"/>
+    <bootstrap class="Contao\TestCase\WarnXdebugPhpunitExtension"/>
+  </extensions>
   <source>
     <include>
       <directory>./src</directory>
     </include>
-    <exclude>
-      <directory>./src/Resources</directory>
-    </exclude>
   </source>
 </phpunit>

@@ -18,21 +18,36 @@ namespace Janborg\ContaoIcal\Tests;
 
 use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
+use Contao\CoreBundle\InsertTag\InsertTagParser;
 use Contao\System;
+use Contao\TestCase\ContaoTestCase;
 use Janborg\ContaoIcal\CalendarIcalExporter;
 use Janborg\ContaoIcal\Event\EditVeventEvent;
 use Kigkonsult\Icalcreator\Util\DateTimeFactory;
 use Kigkonsult\Icalcreator\Vcalendar;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Kigkonsult\Icalcreator\Vevent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class CalendarIcalExporterTest extends TestCase
+class CalendarIcalExporterTest extends ContaoTestCase
 {
+    private Container $container;
+
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->setContainer();
+    }
+
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['TL_HOOKS']);
+
+        $this->resetStaticProperties([System::class]);
+
+        parent::tearDown();
     }
 
     public function testInitializesExportPropertiesFromCalendarConfiguration(): void
@@ -69,14 +84,24 @@ class CalendarIcalExporterTest extends TestCase
         $this->assertLessThanOrEqual($after + 14 * 24 * 3600, $exporter->endDate);
     }
 
-    private function setContainer(string $webDir = '/tmp', int $defaultEndDateDays = 365): void
+    public function testCreatesPublishingVcalendarWithCalendarMetadata(): void
     {
-        $container = new Container();
-        $container->setParameter('contao.web_dir', $webDir);
-        $container->setParameter('janborg_contao_ical.defaultEndDateDays', $defaultEndDateDays);
-        $container->setParameter('janborg_contao_ical.defaultEventDuration', 60);
+        $GLOBALS['TL_CONFIG']['timeZone'] = 'Europe/Berlin';
 
-        System::setContainer($container);
+        $calendarModel = $this->createCalendar([
+            'title' => 'Team events',
+            'ical_description' => 'All events of the first team',
+        ]);
+
+        $exporter = new CalendarIcalExporter($calendarModel, $this->createStub(EventDispatcherInterface::class));
+        $exporter->createVCalendar($calendarModel);
+
+        $content = $exporter->getIcalContent();
+
+        $this->assertStringContainsString('METHOD:PUBLISH', $content);
+        $this->assertStringContainsString('X-WR-CALNAME:Team events', $content);
+        $this->assertStringContainsString('X-WR-CALDESC:All events of the first team', $content);
+        $this->assertStringContainsString('X-WR-TIMEZONE:Europe/Berlin', $content);
     }
 
     public function testAddsPublishedTimedEventWithCalendarPrefixAndLocation(): void
@@ -101,6 +126,26 @@ class CalendarIcalExporterTest extends TestCase
         $this->assertStringContainsString('LOCATION:Meeting room', $content);
         $this->assertStringContainsString('DTSTART:'.date(DateTimeFactory::$YmdTHis, $start), $content);
         $this->assertStringContainsString('DTEND:'.date(DateTimeFactory::$YmdTHis, $end), $content);
+    }
+
+    public function testUsesEventTitleAsSummaryWithoutCalendarPrefix(): void
+    {
+        $exporter = $this->createExporter();
+        $calendar = new Vcalendar();
+
+        $exporter->addEventToVcalendar($this->createEvent([
+            'published' => true,
+            'addTime' => true,
+            'startTime' => strtotime('2026-10-01 10:00:00 UTC'),
+            'endTime' => strtotime('2026-10-01 11:00:00 UTC'),
+            'title' => 'Training',
+        ]), $calendar);
+
+        $content = $calendar->createCalendar();
+
+        $this->assertStringContainsString('SUMMARY:Training', $content);
+        $this->assertStringNotContainsString('LOCATION', $content);
+        $this->assertStringNotContainsString('DESCRIPTION', $content);
     }
 
     public function testSkipsUnpublishedEvent(): void
@@ -155,9 +200,56 @@ class CalendarIcalExporterTest extends TestCase
         $this->assertStringContainsString('DTEND;VALUE=DATE:20261002', $content);
     }
 
-    /**
-     * @dataProvider recurringEventProvider
-     */
+    public function testExportsMultiDayAllDayEventWithExclusiveEndDate(): void
+    {
+        $exporter = $this->createExporter();
+        $calendar = new Vcalendar();
+
+        $exporter->addEventToVcalendar($this->createEvent([
+            'published' => true,
+            'addTime' => false,
+            'startDate' => strtotime('2026-10-01 00:00:00 UTC'),
+            'endDate' => strtotime('2026-10-03 00:00:00 UTC'),
+            'title' => 'Tournament',
+        ]), $calendar);
+
+        $content = $calendar->createCalendar();
+
+        $this->assertStringContainsString('DTSTART;VALUE=DATE:20261001', $content);
+        $this->assertStringContainsString('DTEND;VALUE=DATE:20261004', $content);
+    }
+
+    public function testConvertsTeaserToPlainTextDescription(): void
+    {
+        $insertTagParser = $this->createMock(InsertTagParser::class);
+        $insertTagParser
+            ->expects($this->once())
+            ->method('replaceInline')
+            ->with('<p>Meet at {{link::12}}<br>Bring shoes &amp; water</p>')
+            ->willReturn('<p>Meet at <a href="/hall">the hall</a><br>Bring shoes &amp; water</p>')
+        ;
+
+        $this->container->set('contao.insert_tag.parser', $insertTagParser);
+
+        $exporter = $this->createExporter();
+        $calendar = new Vcalendar();
+
+        $exporter->addEventToVcalendar($this->createEvent([
+            'published' => true,
+            'addTime' => true,
+            'startTime' => strtotime('2026-10-01 10:00:00 UTC'),
+            'endTime' => strtotime('2026-10-01 11:00:00 UTC'),
+            'title' => 'Training',
+            'teaser' => '<p>Meet at {{link::12}}<br>Bring shoes &amp; water</p>',
+        ]), $calendar);
+
+        $this->assertStringContainsString(
+            'DESCRIPTION:Meet at the hall\nBring shoes & water',
+            $calendar->createCalendar(),
+        );
+    }
+
+    #[DataProvider('recurringEventProvider')]
     public function testExportsRecurringEventRule(string $unit, int $interval, int $count, string $expectedRule): void
     {
         $exporter = $this->createExporter();
@@ -174,7 +266,13 @@ class CalendarIcalExporterTest extends TestCase
             'recurrences' => $count,
         ]), $calendar);
 
-        $this->assertStringContainsString($expectedRule, $calendar->createCalendar());
+        $content = $calendar->createCalendar();
+
+        $this->assertStringContainsString($expectedRule, $content);
+
+        if (1 === $interval) {
+            $this->assertStringNotContainsString('INTERVAL=', $content);
+        }
     }
 
     /**
@@ -186,25 +284,57 @@ class CalendarIcalExporterTest extends TestCase
         yield 'weekly interval' => ['weeks', 2, 0, 'RRULE:FREQ=WEEKLY;INTERVAL=2'];
         yield 'monthly' => ['months', 1, 1, 'RRULE:FREQ=MONTHLY;COUNT=1'];
         yield 'yearly' => ['years', 1, 2, 'RRULE:FREQ=YEARLY;COUNT=2'];
+        yield 'unlimited' => ['days', 1, 0, 'RRULE:FREQ=DAILY'."\r\n"];
     }
 
     public function testDispatchesEventThatCanModifyVevent(): void
     {
+        $event = $this->createEvent([
+            'published' => true,
+            'addTime' => true,
+            'startTime' => strtotime('2026-10-01 10:00:00 UTC'),
+            'endTime' => strtotime('2026-10-01 11:00:00 UTC'),
+            'title' => 'Original',
+        ]);
+
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(
-                static function (object $event): object {
-                    self::assertInstanceOf(EditVeventEvent::class, $event);
-                    $event->getVevent()->setSummary('Modified by listener');
+                static function (object $dispatched) use ($event): object {
+                    self::assertInstanceOf(EditVeventEvent::class, $dispatched);
+                    self::assertSame($event, $dispatched->getCalendarEvent());
 
-                    return $event;
+                    $dispatched->getVevent()->setSummary('Modified by listener');
+
+                    return $dispatched;
                 },
             )
         ;
 
         $exporter = $this->createExporter([], $eventDispatcher);
+        $calendar = new Vcalendar();
+
+        $exporter->addEventToVcalendar($event, $calendar);
+
+        $this->assertStringContainsString('SUMMARY:Modified by listener', $calendar->createCalendar());
+    }
+
+    public function testAppliesLegacyEditVeventHook(): void
+    {
+        $listener = new class() {
+            public function onEditVEvent(Vevent $vEvent, CalendarEventsModel $event): Vevent
+            {
+                $vEvent->setSummary('Hooked: '.$event->title);
+
+                return $vEvent;
+            }
+        };
+
+        $GLOBALS['TL_HOOKS']['editVEvent'] = [[$listener, 'onEditVEvent']];
+
+        $exporter = $this->createExporter();
         $calendar = new Vcalendar();
 
         $exporter->addEventToVcalendar($this->createEvent([
@@ -215,7 +345,17 @@ class CalendarIcalExporterTest extends TestCase
             'title' => 'Original',
         ]), $calendar);
 
-        $this->assertStringContainsString('SUMMARY:Modified by listener', $calendar->createCalendar());
+        $this->assertStringContainsString('SUMMARY:Hooked: Original', $calendar->createCalendar());
+    }
+
+    private function setContainer(string $webDir = '/tmp', int $defaultEndDateDays = 365): void
+    {
+        $this->container = new Container();
+        $this->container->setParameter('contao.web_dir', $webDir);
+        $this->container->setParameter('janborg_contao_ical.defaultEndDateDays', $defaultEndDateDays);
+        $this->container->setParameter('janborg_contao_ical.defaultEventDuration', 60);
+
+        System::setContainer($this->container);
     }
 
     /**
@@ -234,24 +374,7 @@ class CalendarIcalExporterTest extends TestCase
      */
     private function createCalendar(array $data): CalendarModel
     {
-        /** @var CalendarModel&MockObject $calendar */
-        $calendar = $this->getMockBuilder(CalendarModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__get', '__isset'])
-            ->getMock()
-        ;
-
-        $calendar
-            ->method('__get')
-            ->willReturnCallback(static fn (string $property): mixed => $data[$property] ?? null)
-        ;
-
-        $calendar
-            ->method('__isset')
-            ->willReturnCallback(static fn (string $property): bool => isset($data[$property]))
-        ;
-
-        return $calendar;
+        return $this->createClassWithPropertiesStub(CalendarModel::class, $data);
     }
 
     /**
@@ -259,23 +382,6 @@ class CalendarIcalExporterTest extends TestCase
      */
     private function createEvent(array $data): CalendarEventsModel
     {
-        /** @var CalendarEventsModel&MockObject $event */
-        $event = $this->getMockBuilder(CalendarEventsModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__get', '__isset'])
-            ->getMock()
-        ;
-
-        $event
-            ->method('__get')
-            ->willReturnCallback(static fn (string $property): mixed => $data[$property] ?? null)
-        ;
-
-        $event
-            ->method('__isset')
-            ->willReturnCallback(static fn (string $property): bool => isset($data[$property]))
-        ;
-
-        return $event;
+        return $this->createClassWithPropertiesStub(CalendarEventsModel::class, $data);
     }
 }
