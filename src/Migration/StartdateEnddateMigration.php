@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Janborg\ContaoIcal\Migration;
 
-use Contao\CalendarModel;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Migration\AbstractMigration;
 use Contao\CoreBundle\Migration\MigrationResult;
 use Doctrine\DBAL\Connection;
@@ -25,10 +23,8 @@ use Doctrine\DBAL\Types\StringType;
 
 class StartdateEnddateMigration extends AbstractMigration
 {
-    public function __construct(
-        private readonly Connection $connection,
-        private readonly ContaoFramework $framework,
-    ) {
+    public function __construct(private readonly Connection $connection)
+    {
     }
 
     public function shouldRun(): bool
@@ -53,24 +49,18 @@ class StartdateEnddateMigration extends AbstractMigration
 
     public function run(): MigrationResult
     {
-        $this->framework->initialize();
-
-        $this->connection->executeQuery(
+        $this->connection->executeStatement(
             'ALTER TABLE tl_calendar CHANGE ical_export_start ical_export_start VARCHAR(12) NULL DEFAULT NULL',
         );
 
-        $this->connection->executeQuery(
+        $this->connection->executeStatement(
             'ALTER TABLE tl_calendar CHANGE ical_export_end ical_export_end VARCHAR(12) NULL DEFAULT NULL',
         );
 
-        $objCalendars = CalendarModel::findAll();
+        $calendars = $this->connection->fetchAllAssociative('SELECT id, ical_export_start, ical_export_end FROM tl_calendar');
 
-        foreach ($objCalendars ?? [] as $objCalendar) {
-            '' === $objCalendar->ical_export_start ? $int_start = null : $int_start = (int) $objCalendar->ical_export_start;
-
-            '' === $objCalendar->ical_export_end ? $int_end = null : $int_end = (int) $objCalendar->ical_export_end;
-
-            $this->connection->executeQuery(
+        foreach ($calendars as $calendar) {
+            $this->connection->executeStatement(
                 '
                 UPDATE
                     tl_calendar
@@ -81,18 +71,18 @@ class StartdateEnddateMigration extends AbstractMigration
                     id = ?
             ',
                 [
-                    $int_start,
-                    $int_end,
-                    $objCalendar->id,
+                    $this->toTimestamp($calendar['ical_export_start']),
+                    $this->toTimestamp($calendar['ical_export_end']),
+                    $calendar['id'],
                 ],
             );
         }
 
-        $this->connection->executeQuery(
+        $this->connection->executeStatement(
             'ALTER TABLE tl_calendar CHANGE ical_export_start ical_export_start INT(10) NULL DEFAULT NULL',
         );
 
-        $this->connection->executeQuery(
+        $this->connection->executeStatement(
             'ALTER TABLE tl_calendar CHANGE ical_export_end ical_export_end INT(10) NULL DEFAULT NULL',
         );
 
@@ -100,5 +90,10 @@ class StartdateEnddateMigration extends AbstractMigration
             true,
             'Changed type for ical_export_start and ical_export_end to INT',
         );
+    }
+
+    private function toTimestamp(mixed $value): int|null
+    {
+        return null === $value || '' === $value ? null : (int) $value;
     }
 }
