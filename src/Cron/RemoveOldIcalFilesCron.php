@@ -33,12 +33,18 @@ class RemoveOldIcalFilesCron
 {
     public function __construct(private readonly ContaoFramework $framework)
     {
-        $this->framework->initialize();
     }
 
     public function __invoke(): void
     {
+        $this->framework->initialize();
+
         $shareDir = System::getContainer()->getParameter('contao.web_dir').'/share/'; // TODO: use DI
+
+        // nothing to clean up, if no ics file has been exported yet
+        if (!is_dir($shareDir)) {
+            return;
+        }
 
         // Delete old files
         foreach (scandir($shareDir) as $file) {
@@ -48,14 +54,14 @@ class RemoveOldIcalFilesCron
 
             $objFile = new File(StringUtil::stripRootDir($shareDir).$file);
 
-            $calendar = CalendarModel::findBy(['ical_alias=?'], [$objFile->filename]);
-
-            $calendarEvent = CalendarEventsModel::findByAlias($objFile->filename);
-
             // keep files with extensions, other than ics
             if ('ics' !== $objFile->extension) {
                 continue;
             }
+
+            $calendar = CalendarModel::findOneBy('ical_alias', $objFile->filename);
+
+            $calendarEvent = CalendarEventsModel::findByAlias($objFile->filename);
 
             // delete file if neither $calendar nor calendarEvent exists with alias = filename
             if (null === $calendar && null === $calendarEvent) {
@@ -65,7 +71,7 @@ class RemoveOldIcalFilesCron
                 continue;
             }
 
-            // delete file if calendar is protected @phpstan-ignore-next-line
+            // delete file if calendar is protected
             if (null !== $calendar && $calendar->protected) {
                 $objFile->delete();
                 // TODO: use DI
@@ -74,16 +80,20 @@ class RemoveOldIcalFilesCron
             }
 
             // keep file, if it is linked to any not protected calendar with export_ical =
-            // true, ical_share = true and ical_alias = filename @phpstan-ignore-next-line
+            // true, ical_share = true and ical_alias = filename
             if (null !== $calendar && $calendar->export_ical && $calendar->share_ical) {
                 continue;
             }
 
-            // keep file, if it is linked to any not protected calendarEvent with alias =
-            // filename and calendar has export_ical = true and ical_share = true
-            $parentCalendar = CalendarModel::findById($calendarEvent->pid);
+            // keep file, if it is linked to any calendarEvent with alias = filename and its
+            // calendar is not protected and has export_ical = true and share_ical_events = true
+            $parentCalendar = null !== $calendarEvent ? CalendarModel::findById($calendarEvent->pid) : null;
+
             if (
-                null !== $calendarEvent && null !== $parentCalendar && $parentCalendar->export_ical && !$parentCalendar->share_ical_events
+                null !== $parentCalendar
+                && !$parentCalendar->protected
+                && $parentCalendar->export_ical
+                && $parentCalendar->share_ical_events
                 // TODO: delete calendarEvents from the past (parameter?!)
             ) {
                 continue;

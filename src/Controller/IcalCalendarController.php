@@ -69,6 +69,10 @@ class IcalCalendarController
 
         $calendar = CalendarModel::findById($event->pid);
 
+        if (null === $calendar) {
+            throw new PageNotFoundException();
+        }
+
         if ($calendar->protected && !$this->security->isGranted(ContaoCorePermissions::MEMBER_IN_GROUPS, StringUtil::deserialize($calendar->groups, true))) {
             throw new AccessDeniedException();
         }
@@ -87,10 +91,10 @@ class IcalCalendarController
     #[Route(path: '/ical/calendar/{ical_alias}', name: 'janborg_calendar_ical_calendar', defaults: ['_scope' => 'frontend', '_token_check' => true])]
     public function ical_calendar(Request $request, string $ical_alias): CalendarResponse|Response
     {
-        $calendar = CalendarModel::findOneBy('ical_alias', $ical_alias);
-
         // Initialize the Contao framework
         $this->framework->initialize();
+
+        $calendar = CalendarModel::findOneBy('ical_alias', $ical_alias);
 
         // Set the root page for the domain as the pageModel attribute
         $root = $this->findFirstPublishedRootByHostAndLanguage($request->getHost(), $request->getLocale());
@@ -120,7 +124,8 @@ class IcalCalendarController
 
         $objEvents = CalendarEventsModel::findCurrentByPid($calendar->id, $startDate, $endDate);
 
-        foreach ($objEvents as $event) {
+        // deliver an empty calendar, if there are no events in the export period
+        foreach ($objEvents ?? [] as $event) {
             $calendarIcalExporter->addEventToVcalendar($event, $calendarIcalExporter->vCal);
         }
 
